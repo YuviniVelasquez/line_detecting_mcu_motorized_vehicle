@@ -1,0 +1,698 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  19:33:25
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\interrupts_timers.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EW9C42.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\interrupts_timers.c" -lC
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\Obj"
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\interrupts_timers.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\interrupts_timers.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\interrupts_timers.c
+      1          //===========================================================================
+      2          // File Name : interrupts_timers.c
+      3          //
+      4          // Description: This file contains timers
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 9/11/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h"
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x700
+   \   union <unnamed> _A_ADCCTL0_L
+   \                     _A_ADCCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x21a
+   \   union <unnamed> _A_PAIE_L
+   \                     _A_PAIE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x23a
+   \   union <unnamed> _A_PBIE_L
+   \                     _A_PBIE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x24a
+   \   union <unnamed> _A_PCSEL0_L
+   \                     _A_PCSEL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x24c
+   \   union <unnamed> _A_PCSEL1_L
+   \                     _A_PCSEL1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x392
+   \   union <unnamed> _A_TB0CCR0_L
+   \                     _A_TB0CCR0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x394
+   \   union <unnamed> _A_TB0CCR1_L
+   \                     _A_TB0CCR1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x396
+   \   union <unnamed> _A_TB0CCR2_L
+   \                     _A_TB0CCR2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3ae
+   \   union <unnamed> _A_TB0IV_L
+   \                     _A_TB0IV_L:
+   \   000000                DS8 2
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          
+     16          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     17          volatile char one_time;
+   \                     one_time:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     18          unsigned int LCD_COUNTER;
+   \                     LCD_COUNTER:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     19          unsigned int TIME_SEQUENCE_COUNTER;
+   \                     TIME_SEQUENCE_COUNTER:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     20          unsigned int LCD_BACKLITE_COUNTER;
+   \                     LCD_BACKLITE_COUNTER:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     21          volatile unsigned int p4_counter ;
+   \                     p4_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     22          volatile unsigned int p2_counter ;
+   \                     p2_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     23          volatile unsigned int enable_counter1;
+   \                     enable_counter1:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          volatile unsigned int enable_counter2;
+   \                     enable_counter2:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     25          volatile unsigned int enable_counter10;
+   \                     enable_counter10:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     26          volatile unsigned int enable_counter20;
+   \                     enable_counter20:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     27          volatile unsigned int run_complete;    //p5
+   \                     run_complete:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     28          volatile unsigned int pause_complete;      //p5
+   \                     pause_complete:
+   \   000000                DS8 2
+     29          extern volatile unsigned int time_run;         //p5
+     30          extern volatile unsigned int time_pause;       //p5
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     31          volatile unsigned int DEBOUNCER_COUNTER1;
+   \                     DEBOUNCER_COUNTER1:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     32          volatile unsigned int DEBOUNCER_COUNTER2;
+   \                     DEBOUNCER_COUNTER2:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          volatile unsigned int run_counter;
+   \                     run_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     34          volatile unsigned int pause_counter;
+   \                     pause_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     35          volatile unsigned int Time_Sequence;
+   \                     Time_Sequence:
+   \   000000                DS8 2
+     36          extern volatile unsigned char update_display;
+     37          extern volatile unsigned char display_changed;
+     38          extern volatile unsigned int circle_timer_count;
+     39          extern volatile unsigned int Time_Sequence;
+     40          extern volatile unsigned int one_s_passed_port;
+     41          extern volatile int switch_pressed;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     42          unsigned int local_time_run;
+   \                     local_time_run:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     43          unsigned int local_time_pause;
+   \                     local_time_pause:
+   \   000000                DS8 2
+     44          extern unsigned int called_off;
+     45          extern unsigned int state_demo ;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     46          unsigned int update_display_counter;
+   \                     update_display_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     47          volatile unsigned int one_sec_count;
+   \                     one_sec_count:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     48          unsigned int enable_sec_count;
+   \                     enable_sec_count:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     49          unsigned int counter_second;
+   \                     counter_second:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     50          unsigned int one_sec_clear_array;
+   \                     one_sec_clear_array:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     51          unsigned volatile int clear_array;
+   \                     clear_array:
+   \   000000                DS8 2
+     52          
+     53          extern unsigned int display_menu_state;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     54          volatile unsigned int five_sec_count;
+   \                     five_sec_count:
+   \   000000                DS8 2
+     55          extern volatile int p2_pressed;
+     56          
+     57          volatile extern unsigned int UCA0_index;
+     58          extern char test_command[10];
+     59          extern char message_keeper[10];
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     60          int state;
+   \                     state:
+   \   000000                DS8 2
+     61          extern unsigned int enable_200ms_counter;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     62          int counter_200ms;
+   \                     counter_200ms:
+   \   000000                DS8 2
+     63          extern volatile unsigned int low_once;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     64          volatile unsigned int enable_setup_commands;
+   \                     enable_setup_commands:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     65          volatile unsigned int enable_command_counter; 
+   \                     enable_command_counter:
+   \   000000                DS8 2
+     66          extern volatile unsigned int command_time_counter;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     67          unsigned int enable_adc;
+   \                     enable_adc:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     68          unsigned int adc_counter;
+   \                     adc_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     69          unsigned int circle_timer;                      //overall timer
+   \                     circle_timer:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     70          volatile unsigned int enable_circle_timer;               //enables circuit timer
+   \                     enable_circle_timer:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     71          unsigned int circle_timer_interrupt_counter;    //counts every 5 ms
+   \                     circle_timer_interrupt_counter:
+   \   000000                DS8 2
+     72          
+     73          #pragma vector = TIMER0_B0_VECTOR// TIMERB0_CCR0, DEFINITION GIVEN BY SPECS//CURRENTLY STOPPING EVERY 5 MS
+
+   \                                 In  segment ISR_CODE, align 2
+     74          __interrupt void Timer0_B0_ISR(void){
+   \                     Timer0_B0_ISR:
+     75          //------------------------------------------------------------------------------
+     76          // TimerB0 0 Interrupt handler
+     77          //----------------------------------------------------------------------------
+     78          //...... Add What you need happen in the interrupt ......//current interrupt 5ms
+     79          
+     80          //Time_Sequence counter, case enabler, reset
+     81            TIME_SEQUENCE_COUNTER++;
+   \   000000   9253....     ADD.W   #0x1, &TIME_SEQUENCE_COUNTER
+     82            update_display_counter++;
+   \   000004   9253....     ADD.W   #0x1, &update_display_counter
+     83            
+     84            if(enable_command_counter ==1){
+   \   000008   9293....     CMP.W   #0x1, &enable_command_counter
+   \   00000C   0220         JNE     ??Timer0_B0_ISR_0
+     85              command_time_counter++;
+   \   00000E   9253....     ADD.W   #0x1, &command_time_counter
+     86            }
+     87            if(enable_200ms_counter ==1){
+   \                     ??Timer0_B0_ISR_0:
+   \   000012   9293....     CMP.W   #0x1, &enable_200ms_counter
+   \   000016   0220         JNE     ??Timer0_B0_ISR_1
+     88            counter_200ms++;
+   \   000018   9253....     ADD.W   #0x1, &counter_200ms
+     89            }
+     90            if(counter_200ms>=40){
+   \                     ??Timer0_B0_ISR_1:
+   \   00001C   B2902800.... CMP.W   #0x28, &counter_200ms
+   \   000022   0638         JL      ??Timer0_B0_ISR_2
+     91            low_once = 2; 
+   \   000024   A243....     MOV.W   #0x2, &low_once
+     92            enable_200ms_counter =0;
+   \   000028   8243....     MOV.W   #0x0, &enable_200ms_counter
+     93            counter_200ms =0;
+   \   00002C   8243....     MOV.W   #0x0, &counter_200ms
+     94            }
+     95              if(low_once == 2){
+   \                     ??Timer0_B0_ISR_2:
+   \   000030   A293....     CMP.W   #0x2, &low_once
+   \   000034   0720         JNE     ??Timer0_B0_ISR_3
+     96                P5SEL0 |= IOT_RESET;             //IOT_RESET signal selection
+   \   000036   D2D34A02     BIS.B   #0x1, &0x24a
+     97                P5SEL1 |= IOT_RESET;             //IOT_RESET signal selection
+   \   00003A   D2D34C02     BIS.B   #0x1, &0x24c
+     98                low_once =3;
+   \   00003E   B2400300.... MOV.W   #0x3, &low_once
+     99                //GREEN_LED_ON;
+    100          
+    101              }
+    102            if(TIME_SEQUENCE_COUNTER == EVERY_10_MS){       //Every 10 ms
+   \                     ??Timer0_B0_ISR_3:
+   \   000044   A293....     CMP.W   #0x2, &TIME_SEQUENCE_COUNTER
+   \   000048   0620         JNE     ??Timer0_B0_ISR_4
+    103                Time_Sequence++;
+   \   00004A   9253....     ADD.W   #0x1, &Time_Sequence
+    104                TIME_SEQUENCE_COUNTER = RESET_COUNTER;
+   \   00004E   8243....     MOV.W   #0x0, &TIME_SEQUENCE_COUNTER
+    105                one_time = YES;
+   \   000052   D243....     MOV.B   #0x1, &one_time
+    106            }
+    107            if(update_display_counter > EVERY_200_MS){
+   \                     ??Timer0_B0_ISR_4:
+   \   000056   B2902900.... CMP.W   #0x29, &update_display_counter
+   \   00005C   0428         JNC     ??Timer0_B0_ISR_5
+    108                update_display = YES;
+   \   00005E   D243....     MOV.B   #0x1, &update_display
+    109                update_display_counter = RESET_COUNTER;    
+   \   000062   8243....     MOV.W   #0x0, &update_display_counter
+    110             
+    111            }
+    112            if(enable_adc){
+   \                     ??Timer0_B0_ISR_5:
+   \   000066   8293....     CMP.W   #0x0, &enable_adc
+   \   00006A   0224         JEQ     ??Timer0_B0_ISR_6
+    113            adc_counter++;
+   \   00006C   9253....     ADD.W   #0x1, &adc_counter
+    114            }
+    115            if(adc_counter >= EVERY_10_MS){
+   \                     ??Timer0_B0_ISR_6:
+   \   000070   A293....     CMP.W   #0x2, &adc_counter
+   \   000074   0628         JNC     ??Timer0_B0_ISR_7
+    116             ADCCTL0 |= ADCENC; // Enable Conversions
+   \   000076   A2D30007     BIS.W   #0x2, &0x700
+    117             ADCCTL0 |= ADCSC; // Start next sample
+   \   00007A   92D30007     BIS.W   #0x1, &0x700
+    118             adc_counter=RESET_COUNTER;
+   \   00007E   8243....     MOV.W   #0x0, &adc_counter
+    119            }
+    120            if(enable_circle_timer){
+   \                     ??Timer0_B0_ISR_7:
+   \   000082   8293....     CMP.W   #0x0, &enable_circle_timer
+   \   000086   0224         JEQ     ??Timer0_B0_ISR_8
+    121                circle_timer_interrupt_counter++;
+   \   000088   9253....     ADD.W   #0x1, &circle_timer_interrupt_counter
+    122            }
+    123            if(circle_timer_interrupt_counter >= 210){      //every second
+   \                     ??Timer0_B0_ISR_8:
+   \   00008C   B290D200.... CMP.W   #0xd2, &circle_timer_interrupt_counter
+   \   000092   0428         JNC     ??Timer0_B0_ISR_9
+    124              circle_timer++;
+   \   000094   9253....     ADD.W   #0x1, &circle_timer
+    125              circle_timer_interrupt_counter =0;
+   \   000098   8243....     MOV.W   #0x0, &circle_timer_interrupt_counter
+    126            }
+    127            
+    128            //one second counter
+    129          //   if(one_sec_count == 1){
+    130          //      enable_sec_count = 1;
+    131          //  }
+    132          //  if(enable_sec_count){
+    133          //    counter_second++;
+    134          //  }
+    135          //  if(counter_second > 200 ){
+    136          //      enable_sec_count = 0;
+    137          //      one_sec_count = 2;        //done sec
+    138          //      counter_second =0;
+    139          //  }
+    140            
+    141            //five sec counter
+    142            if(five_sec_count == 1){
+   \                     ??Timer0_B0_ISR_9:
+   \   00009C   9293....     CMP.W   #0x1, &five_sec_count
+   \   0000A0   0220         JNE     ??Timer0_B0_ISR_10
+    143                enable_sec_count = 1;
+   \   0000A2   9243....     MOV.W   #0x1, &enable_sec_count
+    144            }
+    145            if(enable_sec_count){
+   \                     ??Timer0_B0_ISR_10:
+   \   0000A6   8293....     CMP.W   #0x0, &enable_sec_count
+   \   0000AA   0224         JEQ     ??Timer0_B0_ISR_11
+    146              counter_second++;
+   \   0000AC   9253....     ADD.W   #0x1, &counter_second
+    147            }
+    148            if(counter_second > 1000 ){
+   \                     ??Timer0_B0_ISR_11:
+   \   0000B0   B290E903.... CMP.W   #0x3e9, &counter_second
+   \   0000B6   0828         JNC     ??Timer0_B0_ISR_12
+    149                enable_sec_count = 0;
+   \   0000B8   8243....     MOV.W   #0x0, &enable_sec_count
+    150                five_sec_count = 2;        //done sec
+   \   0000BC   A243....     MOV.W   #0x2, &five_sec_count
+    151                counter_second =0;
+   \   0000C0   8243....     MOV.W   #0x0, &counter_second
+    152                enable_setup_commands = 1;        //enables dissasemby and port number
+   \   0000C4   9243....     MOV.W   #0x1, &enable_setup_commands
+    153            } 
+    154          
+    155          TB0CCR0 += TB0CCR0_INTERVAL; // Add Offset to TBCCR0
+   \                     ??Timer0_B0_ISR_12:
+   \   0000C8   B250C4099203 ADD.W   #0x9c4, &0x392
+    156          //----------------------------------------------------------------------------
+    157          }
+   \   0000CE   0013         RETI
+   \   0000D0                REQUIRE _A_PCSEL0_L
+   \   0000D0                REQUIRE _A_PCSEL1_L
+   \   0000D0                REQUIRE _A_ADCCTL0_L
+   \   0000D0                REQUIRE _A_TB0CCR0_L
+    158          #pragma vector=TIMER0_B1_VECTOR //Timer b0 ccr1 and others
+
+   \                                 In  segment ISR_CODE, align 2
+    159          __interrupt void TIMER0_B1_ISR(void){
+   \                     TIMER0_B1_ISR:
+   \   000000   0F12         PUSH.W  R15
+    160          //----------------------------------------------------------------------------
+    161          // TimerB0 1-2, Overflow Interrupt Vector (TBIV) handler
+    162          //----------------------------------------------------------------------------
+    163          switch(__even_in_range(TB0IV,14)){
+   \   000002   1F42AE03     MOV.W   &0x3ae, R15
+   \   000006   E00F         ADDA    R15, PC
+   \                     `?<Jumptable for TIMER0_B1_ISR>_0`:
+   \   000008   433C         JMP     ??TIMER0_B1_ISR_1
+   \   00000A   063C         JMP     ??TIMER0_B1_ISR_8
+   \   00000C   3E3C         JMP     ??TIMER0_B1_ISR_9
+   \   00000E   403C         JMP     ??TIMER0_B1_ISR_1
+   \   000010   3F3C         JMP     ??TIMER0_B1_ISR_1
+   \   000012   3E3C         JMP     ??TIMER0_B1_ISR_1
+   \   000014   3D3C         JMP     ??TIMER0_B1_ISR_1
+   \   000016   3C3C         JMP     ??TIMER0_B1_ISR_1
+    164          case 0: break; // No interrupt
+    165          case 2: // CCR1 not used
+    166          //...... Add What you need happen in the interrupt ......
+    167            //if sw1 var is is  
+    168            //count up debounce time
+    169            //if debounce count is met
+    170            //enable switch interrupt again
+    171            //turn off timer as long as sw2 is not also being debounced
+    172            if(switch_pressed == SWITCH_4_PRESSED){
+   \                     ??TIMER0_B1_ISR_8:
+   \   000018   A292....     CMP.W   #0x4, &switch_pressed
+   \   00001C   0520         JNE     ??TIMER0_B1_ISR_3
+    173                enable_counter1 = YES;
+   \   00001E   9243....     MOV.W   #0x1, &enable_counter1
+    174                switch_pressed = SWITCH_PRESSED_RESET;
+   \   000022   8243....     MOV.W   #0x0, &switch_pressed
+   \   000026   073C         JMP     ??TIMER0_B1_ISR_2
+    175            }else if(switch_pressed == SWITCH_2_PRESSED){
+   \                     ??TIMER0_B1_ISR_3:
+   \   000028   A293....     CMP.W   #0x2, &switch_pressed
+   \   00002C   0420         JNE     ??TIMER0_B1_ISR_2
+    176                enable_counter2 = YES;
+   \   00002E   9243....     MOV.W   #0x1, &enable_counter2
+    177                switch_pressed = SWITCH_PRESSED_RESET;        
+   \   000032   8243....     MOV.W   #0x0, &switch_pressed
+    178            }
+    179            
+    180            if(enable_counter1){
+   \                     ??TIMER0_B1_ISR_2:
+   \   000036   8293....     CMP.W   #0x0, &enable_counter1
+   \   00003A   0224         JEQ     ??TIMER0_B1_ISR_4
+    181              DEBOUNCER_COUNTER1++;
+   \   00003C   9253....     ADD.W   #0x1, &DEBOUNCER_COUNTER1
+    182            }
+    183            if(enable_counter2){
+   \                     ??TIMER0_B1_ISR_4:
+   \   000040   8293....     CMP.W   #0x0, &enable_counter2
+   \   000044   0224         JEQ     ??TIMER0_B1_ISR_5
+    184              DEBOUNCER_COUNTER2++;
+   \   000046   9253....     ADD.W   #0x1, &DEBOUNCER_COUNTER2
+    185            }
+    186            
+    187                if(DEBOUNCER_COUNTER2 >= ONE_S_AT_50MS ){
+   \                     ??TIMER0_B1_ISR_5:
+   \   00004A   B2901400.... CMP.W   #0x14, &DEBOUNCER_COUNTER2
+   \   000050   0A28         JNC     ??TIMER0_B1_ISR_6
+    188                  P2IE |= SW2;                  // P2.6 interrupt enable
+   \   000052   F2D21B02     BIS.B   #0x8, &0x21b
+    189                  DEBOUNCER_COUNTER2 = RESET_COUNTER;
+   \   000056   8243....     MOV.W   #0x0, &DEBOUNCER_COUNTER2
+    190                  enable_counter2 = NO;
+   \   00005A   8243....     MOV.W   #0x0, &enable_counter2
+    191                  p2_counter++;
+   \   00005E   9253....     ADD.W   #0x1, &p2_counter
+    192                  one_s_passed_port = YES;
+   \   000062   9243....     MOV.W   #0x1, &one_s_passed_port
+    193                }
+    194          
+    195                if(DEBOUNCER_COUNTER1 >= ONE_S_AT_50MS){
+   \                     ??TIMER0_B1_ISR_6:
+   \   000066   B2901400.... CMP.W   #0x14, &DEBOUNCER_COUNTER1
+   \   00006C   0A28         JNC     ??TIMER0_B1_ISR_7
+    196                  P4IE |= SW1;                  // P2.6 interrupt enable
+   \   00006E   E2D33B02     BIS.B   #0x2, &0x23b
+    197                  DEBOUNCER_COUNTER1 = RESET_COUNTER;
+   \   000072   8243....     MOV.W   #0x0, &DEBOUNCER_COUNTER1
+    198                  enable_counter1 = NO;
+   \   000076   8243....     MOV.W   #0x0, &enable_counter1
+    199                  p4_counter++;
+   \   00007A   9253....     ADD.W   #0x1, &p4_counter
+    200                  one_s_passed_port = YES;
+   \   00007E   9243....     MOV.W   #0x1, &one_s_passed_port
+    201                  //wheels_forwardpwm();
+    202                }
+    203            
+    204          TB0CCR1 += TB0CCR1_INTERVAL50; // Add Offset to TBCCR1
+   \                     ??TIMER0_B1_ISR_7:
+   \   000082   B250A8619403 ADD.W   #0x61a8, &0x394
+    205          break;
+   \   000088   033C         JMP     ??TIMER0_B1_ISR_1
+    206          case 4: // CCR2 not used
+    207          //...... Add What you need happen in the interrupt ......
+    208          //LCD counter and display
+    209            
+    210          TB0CCR2 += TB0CCR2_INTERVAL2; // Add Offset to TBCCR2
+   \                     ??TIMER0_B1_ISR_9:
+   \   00008A   B250F4019603 ADD.W   #0x1f4, &0x396
+    211          break;
+    212          case 14: // overflow
+    213          //...... Add What you need happen in the interrupt ......
+    214          break;
+    215          default: break;
+    216          }
+    217          //----------------------------------------------------------------------------
+    218          }
+   \                     ??TIMER0_B1_ISR_1:
+   \   000090   3F41         POP.W   R15
+   \   000092   0013         RETI
+   \   000094                REQUIRE _A_PAIE_L
+   \   000094                REQUIRE _A_PBIE_L
+   \   000094                REQUIRE _A_TB0CCR1_L
+   \   000094                REQUIRE _A_TB0CCR2_L
+   \   000094                REQUIRE _A_TB0IV_L
+
+   \                                 In  segment INTVEC, offset 0x54, root
+   \                     `??TIMER0_B1_ISR::??INTVEC 84`:
+   \   000054   ....         DC16    TIMER0_B1_ISR
+
+   \                                 In  segment INTVEC, offset 0x56, root
+   \                     `??Timer0_B0_ISR::??INTVEC 86`:
+   \   000056   ....         DC16    Timer0_B0_ISR
+    219          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      6   TIMER0_B1_ISR
+      4   Timer0_B0_ISR
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  DEBOUNCER_COUNTER1
+       2  DEBOUNCER_COUNTER2
+       2  LCD_BACKLITE_COUNTER
+       2  LCD_COUNTER
+     148  TIMER0_B1_ISR
+       2  TIMER0_B1_ISR::??INTVEC 84
+       2  TIME_SEQUENCE_COUNTER
+       2  Time_Sequence
+     208  Timer0_B0_ISR
+       2  Timer0_B0_ISR::??INTVEC 86
+       2  _A_ADCCTL0_L
+       2  _A_PAIE_L
+       2  _A_PBIE_L
+       2  _A_PCSEL0_L
+       2  _A_PCSEL1_L
+       2  _A_TB0CCR0_L
+       2  _A_TB0CCR1_L
+       2  _A_TB0CCR2_L
+       2  _A_TB0IV_L
+       2  adc_counter
+       2  circle_timer
+       2  circle_timer_interrupt_counter
+       2  clear_array
+       2  counter_200ms
+       2  counter_second
+       2  enable_adc
+       2  enable_circle_timer
+       2  enable_command_counter
+       2  enable_counter1
+       2  enable_counter10
+       2  enable_counter2
+       2  enable_counter20
+       2  enable_sec_count
+       2  enable_setup_commands
+       2  five_sec_count
+       2  local_time_pause
+       2  local_time_run
+       2  one_sec_clear_array
+       2  one_sec_count
+       1  one_time
+       2  p2_counter
+       2  p4_counter
+       2  pause_complete
+       2  pause_counter
+       2  run_complete
+       2  run_counter
+       2  state
+       2  update_display_counter
+
+ 
+  18 bytes in segment DATA16_AN
+  69 bytes in segment DATA16_Z
+   4 bytes in segment INTVEC
+ 356 bytes in segment ISR_CODE
+ 
+ 356 bytes of CODE  memory
+   0 bytes of CONST memory (+  4 bytes shared)
+  69 bytes of DATA  memory (+ 18 bytes shared)
+
+Errors: none
+Warnings: none

@@ -1,0 +1,264 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  19:21:27
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\interrupt_ports.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EWA745.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\interrupt_ports.c" -lC
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\Obj"
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\interrupt_ports.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\interrupt_ports.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\interrupt_ports.c
+      1          //===========================================================================
+      2          // File Name : interrupt_ports.c
+      3          //
+      4          // Description: This file contains the control of the interrupts
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 10/6/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h"
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x21a
+   \   union <unnamed> _A_PAIE_L
+   \                     _A_PAIE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x21c
+   \   union <unnamed> _A_PAIFG_L
+   \                     _A_PAIFG_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x23a
+   \   union <unnamed> _A_PBIE_L
+   \                     _A_PBIE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x23c
+   \   union <unnamed> _A_PBIFG_L
+   \                     _A_PBIFG_L:
+   \   000000                DS8 2
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     16          volatile int switch_pressed;             //sets an integer to a pressed switch
+   \                     switch_pressed:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     17          volatile int emitter_enable;
+   \                     emitter_enable:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     18          volatile unsigned int one_s_passed_port;  
+   \                     one_s_passed_port:
+   \   000000                DS8 2
+     19          extern volatile unsigned int DEBOUNCER_COUNTER1;
+     20          extern volatile unsigned int DEBOUNCER_COUNTER2;
+     21          extern volatile unsigned int enable_counter1;
+     22          extern volatile unsigned int enable_counter2;
+     23          extern volatile unsigned int p4_counter ;
+     24          extern volatile unsigned int p2_counter ;
+     25          extern volatile unsigned int line_state;
+     26          extern unsigned int display_menu_state;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     27          volatile int p2_pressed;
+   \                     p2_pressed:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     28          volatile int p1_pressed;
+   \                     p1_pressed:
+   \   000000                DS8 2
+     29          extern char message_keeper[10];
+     30          extern volatile unsigned int UCA0_index;
+     31          extern volatile unsigned int UCA1_index;
+     32          
+     33          //------------------------------------------------------------------------------
+     34          // Port 2 interrupt. For switches, they are disabled for the duration
+     35          // of the debounce timer. Flag is set that user space can check.
+     36          //Include #pragma vector = [Assigned Vector]
+     37          #pragma vector=PORT2_VECTOR
+     38          //Create Interrupt Service Routine Function with “__interrupt”
+
+   \                                 In  segment ISR_CODE, align 2
+     39          __interrupt void switchP2_interrupt(void) {
+   \                     switchP2_interrupt:
+     40          // Switch 2
+     41            if (P2IFG & SW2) {
+   \   000000   F2B21D02     BIT.B   #0x8, &0x21d
+   \   000004   0A28         JNC     ??switchP2_interrupt_0
+     42              P2IFG &= ~SW2; // IFG SW1 cleared
+   \   000006   F2C21D02     BIC.B   #0x8, &0x21d
+     43              // Set a variable to identify the switch has been pressed.
+     44              switch_pressed = 2;
+   \   00000A   A243....     MOV.W   #0x2, &switch_pressed
+     45              
+     46           
+     47              // Set a variable to identify the switch is being debounced.
+     48             
+     49              //has 1 second passed?
+     50              one_s_passed_port = 0;
+   \   00000E   8243....     MOV.W   #0x0, &one_s_passed_port
+     51               //DISABLE INTERRUPT PURT
+     52              P2IE &= ~SW2;                  // P2.6 interrupt disable
+   \   000012   F2C21B02     BIC.B   #0x8, &0x21b
+     53              
+     54              //SET TIMER TO TURN ITSELF BACK ON
+     55            //  display_menu_state = 1;
+     56              
+     57              p2_pressed ++;
+   \   000016   9253....     ADD.W   #0x1, &p2_pressed
+     58           
+     59            }
+     60          // Use a Timer Value to control the debounce
+     61          }
+   \                     ??switchP2_interrupt_0:
+   \   00001A   0013         RETI
+   \   00001C                REQUIRE _A_PAIFG_L
+   \   00001C                REQUIRE _A_PAIE_L
+     62          
+     63          //------------------------------------------------------------------------------
+     64          // Port 4 interrupt. For switches, they are disabled for the duration
+     65          // of the debounce timer. Flag is set that user space can check.
+     66          //Include #pragma vector = [Assigned Vector]
+     67          #pragma vector=PORT4_VECTOR
+     68          //Create Interrupt Service Routine Function with “__interrupt”
+
+   \                                 In  segment ISR_CODE, align 2
+     69          __interrupt void switchP4_interrupt(void) {
+   \                     switchP4_interrupt:
+     70          // Switch 1
+     71            if (P4IFG & SW1) {
+   \   000000   E2B33D02     BIT.B   #0x2, &0x23d
+   \   000004   0C28         JNC     ??switchP4_interrupt_0
+     72              P4IFG &= ~SW1; // IFG SW1 cleared
+   \   000006   E2C33D02     BIC.B   #0x2, &0x23d
+     73              // Set a variable to identify the switch has been pressed.
+     74              switch_pressed = 4;
+   \   00000A   A242....     MOV.W   #0x4, &switch_pressed
+     75              
+     76          //    if(p4_counter < 4){
+     77          //      p4_counter++;
+     78          //    }
+     79              emitter_enable = 1;
+   \   00000E   9243....     MOV.W   #0x1, &emitter_enable
+     80              line_state = 1;
+   \   000012   9243....     MOV.W   #0x1, &line_state
+     81                  //has 1 second passed?
+     82              one_s_passed_port = 0;
+   \   000016   8243....     MOV.W   #0x0, &one_s_passed_port
+     83              
+     84              //DISABLE INTERRUPT PURT
+     85              P4IE &= ~SW1;                  // P2.6 interrupt disable
+   \   00001A   E2C33B02     BIC.B   #0x2, &0x23b
+     86          
+     87              //SET VARIABLE TO SHOW SWITCH PRESSED
+     88              
+     89           //display_menu_state = 2;
+     90           //p1_pressed = 1;
+     91               // UCA0_index=0;
+     92                //UCA0IE |= UCTXIE;
+     93               // UCA0TXBUF = message_keeper[0];
+     94                
+     95                //UCA1_index=0;
+     96                //UCA1IE |= UCTXIE;
+     97                //UCA1TXBUF = message_keeper[0];
+     98           
+     99          
+    100           
+    101           
+    102            }
+    103          // Use a Timer Value to control the debounce
+    104          }
+   \                     ??switchP4_interrupt_0:
+   \   00001E   0013         RETI
+   \   000020                REQUIRE _A_PBIFG_L
+   \   000020                REQUIRE _A_PBIE_L
+
+   \                                 In  segment INTVEC, offset 0x2c, root
+   \                     `??switchP4_interrupt::??INTVEC 44`:
+   \   00002C   ....         DC16    switchP4_interrupt
+
+   \                                 In  segment INTVEC, offset 0x30, root
+   \                     `??switchP2_interrupt::??INTVEC 48`:
+   \   000030   ....         DC16    switchP2_interrupt
+    105          //------------------------------------------------------------------------------
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   switchP2_interrupt
+      4   switchP4_interrupt
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  _A_PAIE_L
+       2  _A_PAIFG_L
+       2  _A_PBIE_L
+       2  _A_PBIFG_L
+       2  emitter_enable
+       2  one_s_passed_port
+       2  p1_pressed
+       2  p2_pressed
+      28  switchP2_interrupt
+       2  switchP2_interrupt::??INTVEC 48
+      32  switchP4_interrupt
+       2  switchP4_interrupt::??INTVEC 44
+       2  switch_pressed
+
+ 
+  8 bytes in segment DATA16_AN
+ 10 bytes in segment DATA16_Z
+  4 bytes in segment INTVEC
+ 60 bytes in segment ISR_CODE
+ 
+ 60 bytes of CODE  memory
+  0 bytes of CONST memory (+ 4 bytes shared)
+ 10 bytes of DATA  memory (+ 8 bytes shared)
+
+Errors: none
+Warnings: none

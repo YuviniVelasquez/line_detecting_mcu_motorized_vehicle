@@ -1,0 +1,441 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  20:54:03
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\figure_call.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EW6072.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\figure_call.c" -lC
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\Obj"
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\figure_call.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\figure_call.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\figure_call.c
+      1          //===========================================================================
+      2          // File Name : figure_call.c
+      3          //
+      4          // Description: This file will call which figure to start, how much time and when to stop
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 10/2/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h"
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x202
+   \   union <unnamed> _A_PAOUT_L
+   \                     _A_PAOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x242
+   \   union <unnamed> _A_PCOUT_L
+   \                     _A_PCOUT_L:
+   \   000000                DS8 2
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          
+     16          extern unsigned int figure;
+     17          extern volatile unsigned int circle_timer_count;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     18          volatile unsigned int command_call;
+   \                     command_call:
+   \   000000                DS8 2
+     19          extern volatile unsigned int enable_command_counter;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     20          volatile unsigned int command_time_counter;
+   \                     command_time_counter:
+   \   000000                DS8 2
+     21          extern volatile unsigned int command_library_state;
+     22          extern volatile unsigned int command_library1;
+     23          extern volatile unsigned int command_library2;
+     24          extern volatile unsigned int command_library3;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     25          unsigned int commands_completed;
+   \                     commands_completed:
+   \   000000                DS8 2
+     26          extern unsigned int stack_row;
+     27          extern volatile unsigned int arrived_state_int;
+     28          extern volatile unsigned char display_changed;
+     29          
+     30          
+
+   \                                 In  segment CODE, align 2
+     31          void figure_call(void){
+   \                     figure_call:
+     32          //------------------------------------------------------------------------------
+     33          // Calling figures, executing time, stopping
+     34          //------------------------------------------------------------------------------
+     35               if(figure == fcircle){
+   \   000000   9293....     CMP.W   #0x1, &figure
+   \   000004   0820         JNE     ??figure_call_0
+     36                  circle();
+   \   000006   ........     CALLA   #circle
+     37                    if(circle_timer_count >= circle_limit){
+   \   00000A   B2902900.... CMP.W   #0x29, &circle_timer_count
+   \   000010   1928         JNC     ??figure_call_1
+     38                      stop_wheels();     
+   \   000012   ........     BRA     #stop_wheels
+     39                    }
+     40               }else if (figure == finfinity){
+   \                     ??figure_call_0:
+   \   000016   A293....     CMP.W   #0x2, &figure
+   \   00001A   0820         JNE     ??figure_call_2
+     41                  infinity();
+   \   00001C   ........     CALLA   #infinity
+     42                    if(circle_timer_count >= infinity_limit){
+   \   000020   B2904900.... CMP.W   #0x49, &circle_timer_count
+   \   000026   0E28         JNC     ??figure_call_1
+     43                      stop_wheels();
+   \   000028   ........     BRA     #stop_wheels
+     44                    }
+     45                }else if (figure == ftriangle){
+   \                     ??figure_call_2:
+   \   00002C   B2900300.... CMP.W   #0x3, &figure
+   \   000032   0820         JNE     ??figure_call_1
+     46                  triangle();
+   \   000034   ........     CALLA   #triangle
+     47                    if(circle_timer_count >= triangle_limit){
+   \   000038   B2904900.... CMP.W   #0x49, &circle_timer_count
+   \   00003E   0228         JNC     ??figure_call_1
+     48                      stop_wheels();
+   \   000040   ........     CALLA   #stop_wheels
+     49                    }
+     50                }    
+     51          //------------------------------------------------------------------------------
+     52          }
+   \                     ??figure_call_1:
+   \   000044   1001         RETA
+     53          
+
+   \                                 In  segment CODE, align 2
+     54          void command_call_timed(void){
+   \                     command_call_timed:
+     55          //------------------------------------------------------------------------------
+     56          // Calling figures, executing time, stopping
+     57          //------------------------------------------------------------------------------
+     58               if(command_call == FORWARD_2_SECS){
+   \   000000   B2904100.... CMP.W   #0x41, &command_call
+   \   000006   1420         JNE     ??command_call_timed_1
+     59                  wheels_forwardpwm();
+   \   000008   ........     CALLA   #wheels_forwardpwm
+     60                  enable_command_counter =YES;
+   \   00000C   9243....     MOV.W   #0x1, &enable_command_counter
+     61                    if(command_time_counter >= TWO_SECS_LIMIT){
+   \   000010   B2909001.... CMP.W   #0x190, &command_time_counter
+   \   000016   CC28         JNC     ??command_call_timed_0
+     62                      wheels_offpwm();
+   \   000018   ........     CALLA   #wheels_offpwm
+     63                      command_call = ONE_SEC_DEBOUNCER;
+   \   00001C   B2404500.... MOV.W   #0x45, &command_call
+     64                      command_time_counter = RESET_COUNTER;
+   \   000022   8243....     MOV.W   #0x0, &command_time_counter
+     65                      enable_command_counter =NO;
+   \   000026   8243....     MOV.W   #0x0, &enable_command_counter
+     66                      commands_completed++;
+   \   00002A   9253....     ADD.W   #0x1, &commands_completed
+   \   00002E   C03C         JMP     ??command_call_timed_0
+     67                    }
+     68               }else if (command_call == BACK_1_SEC){
+   \                     ??command_call_timed_1:
+   \   000030   B2904200.... CMP.W   #0x42, &command_call
+   \   000036   1420         JNE     ??command_call_timed_2
+     69                  wheels_reversepwm();
+   \   000038   ........     CALLA   #wheels_reversepwm
+     70                  enable_command_counter =YES;
+   \   00003C   9243....     MOV.W   #0x1, &enable_command_counter
+     71                    if(command_time_counter >= ONE_SEC_LIMIT){
+   \   000040   B290C800.... CMP.W   #0xc8, &command_time_counter
+   \   000046   B428         JNC     ??command_call_timed_0
+     72                      wheels_offpwm();
+   \   000048   ........     CALLA   #wheels_offpwm
+     73                      command_call = ONE_SEC_DEBOUNCER;
+   \   00004C   B2404500.... MOV.W   #0x45, &command_call
+     74                      command_time_counter = RESET_COUNTER;
+   \   000052   8243....     MOV.W   #0x0, &command_time_counter
+     75                      enable_command_counter =NO;
+   \   000056   8243....     MOV.W   #0x0, &enable_command_counter
+     76                      commands_completed++;
+   \   00005A   9253....     ADD.W   #0x1, &commands_completed
+   \   00005E   A83C         JMP     ??command_call_timed_0
+     77                    }
+     78                }else if (command_call == RIGHT_45_DEGREES){
+   \                     ??command_call_timed_2:
+   \   000060   B2904300.... CMP.W   #0x43, &command_call
+   \   000066   1420         JNE     ??command_call_timed_3
+     79                 wheels_clkwise_pwm();
+   \   000068   ........     CALLA   #wheels_clkwise_pwm
+     80                 enable_command_counter =YES;  
+   \   00006C   9243....     MOV.W   #0x1, &enable_command_counter
+     81                    if(command_time_counter >= FOURTY_FIVE_D_LIMIT){
+   \   000070   B2903200.... CMP.W   #0x32, &command_time_counter
+   \   000076   9C28         JNC     ??command_call_timed_0
+     82                      wheels_offpwm();
+   \   000078   ........     CALLA   #wheels_offpwm
+     83                      command_call = ONE_SEC_DEBOUNCER;
+   \   00007C   B2404500.... MOV.W   #0x45, &command_call
+     84                      command_time_counter = RESET_COUNTER;
+   \   000082   8243....     MOV.W   #0x0, &command_time_counter
+     85                      enable_command_counter =NO;
+   \   000086   8243....     MOV.W   #0x0, &enable_command_counter
+     86                      commands_completed++;
+   \   00008A   9253....     ADD.W   #0x1, &commands_completed
+   \   00008E   903C         JMP     ??command_call_timed_0
+     87                    }
+     88                }else if (command_call == LEFT_45_DEGREES){
+   \                     ??command_call_timed_3:
+   \   000090   B2904400.... CMP.W   #0x44, &command_call
+   \   000096   1420         JNE     ??command_call_timed_4
+     89                  wheels_ctrwise_pwm();
+   \   000098   ........     CALLA   #wheels_ctrwise_pwm
+     90                  enable_command_counter =YES;
+   \   00009C   9243....     MOV.W   #0x1, &enable_command_counter
+     91                    if(command_time_counter >= FOURTY_FIVE_D_LIMIT_LEFT){
+   \   0000A0   B2905000.... CMP.W   #0x50, &command_time_counter
+   \   0000A6   8428         JNC     ??command_call_timed_0
+     92                      wheels_offpwm(); 
+   \   0000A8   ........     CALLA   #wheels_offpwm
+     93                      command_call = ONE_SEC_DEBOUNCER;
+   \   0000AC   B2404500.... MOV.W   #0x45, &command_call
+     94                      command_time_counter = RESET_COUNTER;
+   \   0000B2   8243....     MOV.W   #0x0, &command_time_counter
+     95                      enable_command_counter =NO;
+   \   0000B6   8243....     MOV.W   #0x0, &enable_command_counter
+     96                      commands_completed++;
+   \   0000BA   9253....     ADD.W   #0x1, &commands_completed
+   \   0000BE   783C         JMP     ??command_call_timed_0
+     97                    }
+     98                }else if (command_call == RIGHT_10_DEGREES){
+   \                     ??command_call_timed_4:
+   \   0000C0   B2904700.... CMP.W   #0x47, &command_call
+   \   0000C6   1420         JNE     ??command_call_timed_5
+     99                wheels_clkwise_pwm();
+   \   0000C8   ........     CALLA   #wheels_clkwise_pwm
+    100                  enable_command_counter =YES;
+   \   0000CC   9243....     MOV.W   #0x1, &enable_command_counter
+    101                    if(command_time_counter >= TEN_D_LIMIT){
+   \   0000D0   B2901400.... CMP.W   #0x14, &command_time_counter
+   \   0000D6   6C28         JNC     ??command_call_timed_0
+    102                      wheels_offpwm(); 
+   \   0000D8   ........     CALLA   #wheels_offpwm
+    103                      command_call = ONE_SEC_DEBOUNCER;
+   \   0000DC   B2404500.... MOV.W   #0x45, &command_call
+    104                      command_time_counter = RESET_COUNTER;
+   \   0000E2   8243....     MOV.W   #0x0, &command_time_counter
+    105                      enable_command_counter =NO;
+   \   0000E6   8243....     MOV.W   #0x0, &enable_command_counter
+    106                      commands_completed++;
+   \   0000EA   9253....     ADD.W   #0x1, &commands_completed
+   \   0000EE   603C         JMP     ??command_call_timed_0
+    107                    }
+    108                }else if (command_call == LEFT_10_DEGREES){
+   \                     ??command_call_timed_5:
+   \   0000F0   B2904800.... CMP.W   #0x48, &command_call
+   \   0000F6   1420         JNE     ??command_call_timed_6
+    109                 wheels_ctrwise_pwm();
+   \   0000F8   ........     CALLA   #wheels_ctrwise_pwm
+    110                  enable_command_counter =YES;
+   \   0000FC   9243....     MOV.W   #0x1, &enable_command_counter
+    111                    if(command_time_counter >= TEN_D_LIMIT){
+   \   000100   B2901400.... CMP.W   #0x14, &command_time_counter
+   \   000106   5428         JNC     ??command_call_timed_0
+    112                      wheels_offpwm(); 
+   \   000108   ........     CALLA   #wheels_offpwm
+    113                      command_call = ONE_SEC_DEBOUNCER;
+   \   00010C   B2404500.... MOV.W   #0x45, &command_call
+    114                      command_time_counter = RESET_COUNTER;
+   \   000112   8243....     MOV.W   #0x0, &command_time_counter
+    115                      enable_command_counter =NO;
+   \   000116   8243....     MOV.W   #0x0, &enable_command_counter
+    116                      commands_completed++;
+   \   00011A   9253....     ADD.W   #0x1, &commands_completed
+   \   00011E   483C         JMP     ??command_call_timed_0
+    117                    }
+    118                }else if (command_call ==FORWARD_5_SECS){
+   \                     ??command_call_timed_6:
+   \   000120   B2904900.... CMP.W   #0x49, &command_call
+   \   000126   1420         JNE     ??command_call_timed_7
+    119                  wheels_forwardpwm();
+   \   000128   ........     CALLA   #wheels_forwardpwm
+    120                  enable_command_counter =YES;
+   \   00012C   9243....     MOV.W   #0x1, &enable_command_counter
+    121                    if(command_time_counter >=FIVE_SECS_LIMIT ){
+   \   000130   B290E803.... CMP.W   #0x3e8, &command_time_counter
+   \   000136   3C28         JNC     ??command_call_timed_0
+    122                      wheels_offpwm(); 
+   \   000138   ........     CALLA   #wheels_offpwm
+    123                      command_call = ONE_SEC_DEBOUNCER;
+   \   00013C   B2404500.... MOV.W   #0x45, &command_call
+    124                      command_time_counter = RESET_COUNTER;
+   \   000142   8243....     MOV.W   #0x0, &command_time_counter
+    125                      enable_command_counter =NO;
+   \   000146   8243....     MOV.W   #0x0, &enable_command_counter
+    126                      commands_completed++;
+   \   00014A   9253....     ADD.W   #0x1, &commands_completed
+   \   00014E   303C         JMP     ??command_call_timed_0
+    127                    }
+    128                }else if (command_call == RIGHT_180_D){
+   \                     ??command_call_timed_7:
+   \   000150   B2904A00.... CMP.W   #0x4a, &command_call
+   \   000156   1420         JNE     ??command_call_timed_8
+    129                  wheels_ctrwise_pwm(); 
+   \   000158   ........     CALLA   #wheels_ctrwise_pwm
+    130                  enable_command_counter =YES;
+   \   00015C   9243....     MOV.W   #0x1, &enable_command_counter
+    131                    if(command_time_counter >= ONE_EIGHTY_LIMIT ){
+   \   000160   B2900401.... CMP.W   #0x104, &command_time_counter
+   \   000166   2428         JNC     ??command_call_timed_0
+    132                      wheels_offpwm(); 
+   \   000168   ........     CALLA   #wheels_offpwm
+    133                      command_call = ONE_SEC_DEBOUNCER;
+   \   00016C   B2404500.... MOV.W   #0x45, &command_call
+    134                      command_time_counter = RESET_COUNTER;
+   \   000172   8243....     MOV.W   #0x0, &command_time_counter
+    135                      enable_command_counter =NO;
+   \   000176   8243....     MOV.W   #0x0, &enable_command_counter
+    136                      commands_completed++;
+   \   00017A   9253....     ADD.W   #0x1, &commands_completed
+   \   00017E   183C         JMP     ??command_call_timed_0
+    137                    }
+    138                }else if (command_call == CHANGE_ARRIVED_STATE){
+   \                     ??command_call_timed_8:
+   \   000180   B2904B00.... CMP.W   #0x4b, &command_call
+   \   000186   1420         JNE     ??command_call_timed_0
+    139                      wheels_offpwm(); 
+   \   000188   ........     CALLA   #wheels_offpwm
+    140                      GREEN_LED_OFF;
+   \   00018C   F2C040004302 BIC.B   #0x40, &0x243
+    141                      RED_LED_ON;
+   \   000192   D2D30202     BIS.B   #0x1, &0x202
+    142                      arrived_state_int ++;
+   \   000196   9253....     ADD.W   #0x1, &arrived_state_int
+    143                      command_call = ONE_SEC_DEBOUNCER;
+   \   00019A   B2404500.... MOV.W   #0x45, &command_call
+    144                      command_time_counter = RESET_COUNTER;
+   \   0001A0   8243....     MOV.W   #0x0, &command_time_counter
+    145                      commands_completed++;
+   \   0001A4   9253....     ADD.W   #0x1, &commands_completed
+    146                      enable_display_update();
+   \   0001A8   ........     CALLA   #enable_display_update
+    147                      display_changed = YES;
+   \   0001AC   D243....     MOV.B   #0x1, &display_changed
+    148                    
+    149                }
+    150          
+    151               if(command_call == ONE_SEC_DEBOUNCER){
+   \                     ??command_call_timed_0:
+   \   0001B0   B2904500.... CMP.W   #0x45, &command_call
+   \   0001B6   1F20         JNE     ??command_call_timed_9
+    152                  enable_command_counter =YES;
+   \   0001B8   9243....     MOV.W   #0x1, &enable_command_counter
+    153                  if(command_time_counter >= HALF_SEC_LIMIT){     //USED TO BE ONE_SEC_LIMIT
+   \   0001BC   B2906400.... CMP.W   #0x64, &command_time_counter
+   \   0001C2   1928         JNC     ??command_call_timed_9
+    154                               // command_library_state++;
+    155                                command_call = OFF;
+   \   0001C4   8243....     MOV.W   #0x0, &command_call
+    156                                command_time_counter = RESET_COUNTER;
+   \   0001C8   8243....     MOV.W   #0x0, &command_time_counter
+    157                                enable_command_counter =NO;          
+   \   0001CC   8243....     MOV.W   #0x0, &enable_command_counter
+    158                                if( commands_completed == stack_row){
+   \   0001D0   9292........ CMP.W   &stack_row, &commands_completed
+   \   0001D6   0F20         JNE     ??command_call_timed_9
+    159                                      commands_completed =CLEAR_COUNTER;
+   \   0001D8   8243....     MOV.W   #0x0, &commands_completed
+    160                                      command_library1=CLEAR_COMMAND;
+   \   0001DC   8243....     MOV.W   #0x0, &command_library1
+    161                                      command_library2=CLEAR_COMMAND;
+   \   0001E0   8243....     MOV.W   #0x0, &command_library2
+    162                                      command_library3=CLEAR_COMMAND;
+   \   0001E4   8243....     MOV.W   #0x0, &command_library3
+    163                                      stack_row=CLEAR_COUNTER;
+   \   0001E8   8243....     MOV.W   #0x0, &stack_row
+    164                                      GREEN_LED_ON;
+   \   0001EC   F2D040004302 BIS.B   #0x40, &0x243
+    165                                      RED_LED_OFF;
+   \   0001F2   D2C30202     BIC.B   #0x1, &0x202
+    166                                }
+    167                  }
+    168                }    
+    169          //------------------------------------------------------------------------------
+    170          }
+   \                     ??command_call_timed_9:
+   \   0001F6   1001         RETA
+   \   0001F8                REQUIRE _A_PCOUT_L
+   \   0001F8                REQUIRE _A_PAOUT_L
+    171          
+    172          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   command_call_timed
+        4   -> enable_display_update
+        4   -> wheels_clkwise_pwm
+        4   -> wheels_ctrwise_pwm
+        4   -> wheels_forwardpwm
+        4   -> wheels_offpwm
+        4   -> wheels_reversepwm
+      4   figure_call
+        4   -> circle
+        4   -> infinity
+        0   -> stop_wheels
+        4   -> stop_wheels
+        4   -> triangle
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  _A_PAOUT_L
+       2  _A_PCOUT_L
+       2  command_call
+     504  command_call_timed
+       2  command_time_counter
+       2  commands_completed
+      70  figure_call
+
+ 
+ 574 bytes in segment CODE
+   4 bytes in segment DATA16_AN
+   6 bytes in segment DATA16_Z
+ 
+ 574 bytes of CODE memory
+   6 bytes of DATA memory (+ 4 bytes shared)
+
+Errors: none
+Warnings: none

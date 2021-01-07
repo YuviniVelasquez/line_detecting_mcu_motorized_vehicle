@@ -1,0 +1,368 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  19:21:27
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Hex_BCD.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EWA4CF.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\Hex_BCD.c" -lC "C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o "C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\Hex_BCD.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\Hex_BCD.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Hex_BCD.c
+      1          // File Name : Hex_BCD.c
+      2          //
+      3          // Description: This file contains the function that converts the input 
+      4          // to a hex
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 10/18/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          
+     12          #include  "functions.h"
+     13          #include  "msp430.h"
+     14          #include <string.h>
+     15          #include "macros.h"
+     16          
+     17          extern unsigned int adc_line;
+     18          extern volatile unsigned char display_changed;
+     19          extern char display_line[NUM_OF_ROWS][NUM_0F_COLS];
+     20          extern char adc_char[LINE_LENGHT];
+     21          extern volatile unsigned int p4_counter ;
+     22          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     23          unsigned int left_val;
+   \                     left_val:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          unsigned int right_val;
+   \                     right_val:
+   \   000000                DS8 2
+     25          extern volatile unsigned int rotation_timer;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     26          unsigned int counter_char;
+   \                     counter_char:
+   \   000000                DS8 2
+     27          extern unsigned int circle_timer;       //overall timer
+     28          extern unsigned int enable_circle_timer;               //enables circuit timer
+     29          
+     30          //------------------------------------------------------------------------------
+     31          //******************************************************************************
+     32          // Hex to BCD Conversion
+     33          // Convert a Hex number to a BCD for display on an LCD or monitor
+     34          //
+     35          //------------------------------------------------------------------------------
+     36          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     37          char adc_char[LINE_LENGHT];
+   \                     adc_char:
+   \   000000                DS8 10
+     38          
+
+   \                                 In  segment CODE, align 2
+     39          void HEXtoBCD(int hex_value){
+   \                     HEXtoBCD:
+     40           // hex_value = rotation_timer;
+     41            if(adc_line==ADC_LINE2){
+   \   000000   A293....     CMP.W   #0x2, &adc_line
+   \   000004   0320         JNE     ??HEXtoBCD_4
+     42                  left_val = hex_value;
+   \   000006   824C....     MOV.W   R12, &left_val
+   \   00000A   063C         JMP     ??HEXtoBCD_3
+     43          
+     44            }else if (adc_line ==ADC_LINE3){
+   \                     ??HEXtoBCD_4:
+   \   00000C   B2900300.... CMP.W   #0x3, &adc_line
+   \   000012   0220         JNE     ??HEXtoBCD_3
+     45                  right_val = hex_value; 
+   \   000014   824C....     MOV.W   R12, &right_val
+     46            }
+     47              counter_char = circle_timer;
+   \                     ??HEXtoBCD_3:
+   \   000018   9242........ MOV.W   &circle_timer, &counter_char
+     48            
+     49          int value=RESET_INT;
+   \   00001E   0F43         MOV.W   #0x0, R15
+     50          while (counter_char > THOUSAND_LIMIT){
+   \                     ??HEXtoBCD_0:
+   \   000020   B290E803.... CMP.W   #0x3e8, &counter_char
+   \   000026   0528         JNC     ??HEXtoBCD_5
+     51          counter_char = counter_char - THOUSAND_CONVERTER;
+   \   000028   B25018FC.... ADD.W   #0xfc18, &counter_char
+     52          value = value + VALUE_COUNTER;
+   \   00002E   1F53         ADD.W   #0x1, R15
+   \   000030   F73F         JMP     ??HEXtoBCD_0
+     53          }
+     54          adc_char[ADC_CHAR0] = ASCI_CONVERTER + value;
+   \                     ??HEXtoBCD_5:
+   \   000032   0E12         PUSH.W  R14
+   \   000034   C14F0000     MOV.B   R15, 0(SP)
+   \   000038   3E41         POP.W   R14
+   \   00003A   7E503000     ADD.B   #0x30, R14
+   \   00003E   C24E....     MOV.B   R14, &adc_char
+     55          if (adc_char[ADC_CHAR0] == ASCI_ZERO){
+   \   000042   C293....     CMP.B   #0x0, &adc_char
+   \   000046   0320         JNE     ??HEXtoBCD_6
+     56            adc_char[ADC_CHAR0] = '0';
+   \   000048   F2403000.... MOV.B   #0x30, &adc_char
+     57          }
+     58              display_changed = YES;
+   \                     ??HEXtoBCD_6:
+   \   00004E   D243....     MOV.B   #0x1, &display_changed
+     59          value = RESET_INT;
+   \   000052   0F43         MOV.W   #0x0, R15
+     60          while (counter_char > HUNDRED_LIMIT){
+   \                     ??HEXtoBCD_1:
+   \   000054   B2906400.... CMP.W   #0x64, &counter_char
+   \   00005A   0528         JNC     ??HEXtoBCD_7
+     61          counter_char = counter_char - HUNDRED_CONVERTER;
+   \   00005C   B2509CFF.... ADD.W   #0xff9c, &counter_char
+     62          value = value + VALUE_COUNTER;
+   \   000062   1F53         ADD.W   #0x1, R15
+   \   000064   F73F         JMP     ??HEXtoBCD_1
+     63          }
+     64          adc_char[ADC_CHAR1] = ASCI_CONVERTER + value;
+   \                     ??HEXtoBCD_7:
+   \   000066   0E12         PUSH.W  R14
+   \   000068   C14F0000     MOV.B   R15, 0(SP)
+   \   00006C   3E41         POP.W   R14
+   \   00006E   7E503000     ADD.B   #0x30, R14
+   \   000072   C24E....     MOV.B   R14, &adc_char + 1
+     65          if (adc_char[ADC_CHAR1] == ASCI_ZERO){
+   \   000076   C293....     CMP.B   #0x0, &adc_char + 1
+   \   00007A   0320         JNE     ??HEXtoBCD_8
+     66            adc_char[ADC_CHAR1] = '0';
+   \   00007C   F2403000.... MOV.B   #0x30, &adc_char + 1
+     67          }
+     68          display_changed = YES;
+   \                     ??HEXtoBCD_8:
+   \   000082   D243....     MOV.B   #0x1, &display_changed
+     69          
+     70          value = RESET_INT;
+   \   000086   0F43         MOV.W   #0x0, R15
+     71          while (counter_char > TENTHS_LIMIT){
+   \                     ??HEXtoBCD_2:
+   \   000088   B2900A00.... CMP.W   #0xa, &counter_char
+   \   00008E   0528         JNC     ??HEXtoBCD_9
+     72          counter_char = counter_char - TENTHS_CONVERTER;
+   \   000090   B250F6FF.... ADD.W   #0xfff6, &counter_char
+     73          value = value + VALUE_COUNTER;
+   \   000096   1F53         ADD.W   #0x1, R15
+   \   000098   F73F         JMP     ??HEXtoBCD_2
+     74          }
+     75          adc_char[ADC_CHAR2] = ASCI_CONVERTER + value;
+   \                     ??HEXtoBCD_9:
+   \   00009A   0E12         PUSH.W  R14
+   \   00009C   C14F0000     MOV.B   R15, 0(SP)
+   \   0000A0   3E41         POP.W   R14
+   \   0000A2   7E503000     ADD.B   #0x30, R14
+   \   0000A6   C24E....     MOV.B   R14, &adc_char + 2
+     76          if (adc_char[ADC_CHAR2] == ASCI_ZERO){
+   \   0000AA   C293....     CMP.B   #0x0, &adc_char + 2
+   \   0000AE   0320         JNE     ??HEXtoBCD_10
+     77            adc_char[ADC_CHAR2] = '0';
+   \   0000B0   F2403000.... MOV.B   #0x30, &adc_char + 2
+     78          }
+     79          
+     80            adc_char[ADC_CHAR3] = ASCI_CONVERTER + counter_char;
+   \                     ??HEXtoBCD_10:
+   \   0000B6   5E42....     MOV.B   &counter_char, R14
+   \   0000BA   7E503000     ADD.B   #0x30, R14
+   \   0000BE   C24E....     MOV.B   R14, &adc_char + 3
+     81          
+     82                display_line[DISPLAY_L4][DISPLAY_CHAR6] = adc_char[ADC_CHAR0];
+   \   0000C2   D242........ MOV.B   &adc_char, &display_line + 39
+     83                display_line[DISPLAY_L4][DISPLAY_CHAR7] = adc_char[ADC_CHAR1];
+   \   0000C8   D242........ MOV.B   &adc_char + 1, &display_line + 40
+     84                display_line[DISPLAY_L4][DISPLAY_CHAR8] = adc_char[ADC_CHAR2];
+   \   0000CE   D242........ MOV.B   &adc_char + 2, &display_line + 41
+     85                display_line[DISPLAY_L4][DISPLAY_CHAR9] = adc_char[ADC_CHAR3];
+   \   0000D4   D242........ MOV.B   &adc_char + 3, &display_line + 42
+     86          
+     87          
+     88          }
+   \   0000DA   1001         RETA
+     89          //******************************************************************************
+     90          //------------------------------------------------------------------------------
+     91          
+     92          
+     93          
+     94          
+
+   \                                 In  segment CODE, align 2
+     95          void screen_counter(void){
+   \                     screen_counter:
+     96            if(enable_circle_timer){
+   \   000000   8293....     CMP.W   #0x0, &enable_circle_timer
+   \   000004   6124         JEQ     ??screen_counter_3
+     97              counter_char = circle_timer;
+   \   000006   9242........ MOV.W   &circle_timer, &counter_char
+     98            
+     99          int value=RESET_INT;
+   \   00000C   0F43         MOV.W   #0x0, R15
+    100          while (counter_char > THOUSAND_LIMIT){
+   \                     ??screen_counter_0:
+   \   00000E   B290E803.... CMP.W   #0x3e8, &counter_char
+   \   000014   0528         JNC     ??screen_counter_4
+    101          counter_char = counter_char - THOUSAND_CONVERTER;
+   \   000016   B25018FC.... ADD.W   #0xfc18, &counter_char
+    102          value = value + VALUE_COUNTER;
+   \   00001C   1F53         ADD.W   #0x1, R15
+   \   00001E   F73F         JMP     ??screen_counter_0
+    103          }
+    104          adc_char[ADC_CHAR0] = ASCI_CONVERTER + value;
+   \                     ??screen_counter_4:
+   \   000020   0E12         PUSH.W  R14
+   \   000022   C14F0000     MOV.B   R15, 0(SP)
+   \   000026   3E41         POP.W   R14
+   \   000028   7E503000     ADD.B   #0x30, R14
+   \   00002C   C24E....     MOV.B   R14, &adc_char
+    105          if (adc_char[ADC_CHAR0] == ASCI_ZERO){
+   \   000030   C293....     CMP.B   #0x0, &adc_char
+   \   000034   0320         JNE     ??screen_counter_5
+    106            adc_char[ADC_CHAR0] = '0';
+   \   000036   F2403000.... MOV.B   #0x30, &adc_char
+    107          }
+    108              display_changed = YES;
+   \                     ??screen_counter_5:
+   \   00003C   D243....     MOV.B   #0x1, &display_changed
+    109          value = RESET_INT;
+   \   000040   0F43         MOV.W   #0x0, R15
+    110          while (counter_char > HUNDRED_LIMIT){
+   \                     ??screen_counter_1:
+   \   000042   B2906400.... CMP.W   #0x64, &counter_char
+   \   000048   0528         JNC     ??screen_counter_6
+    111          counter_char = counter_char - HUNDRED_CONVERTER;
+   \   00004A   B2509CFF.... ADD.W   #0xff9c, &counter_char
+    112          value = value + VALUE_COUNTER;
+   \   000050   1F53         ADD.W   #0x1, R15
+   \   000052   F73F         JMP     ??screen_counter_1
+    113          }
+    114          adc_char[ADC_CHAR1] = ASCI_CONVERTER + value;
+   \                     ??screen_counter_6:
+   \   000054   0E12         PUSH.W  R14
+   \   000056   C14F0000     MOV.B   R15, 0(SP)
+   \   00005A   3E41         POP.W   R14
+   \   00005C   7E503000     ADD.B   #0x30, R14
+   \   000060   C24E....     MOV.B   R14, &adc_char + 1
+    115          if (adc_char[ADC_CHAR1] == ASCI_ZERO){
+   \   000064   C293....     CMP.B   #0x0, &adc_char + 1
+   \   000068   0320         JNE     ??screen_counter_7
+    116            adc_char[ADC_CHAR1] = '0';
+   \   00006A   F2403000.... MOV.B   #0x30, &adc_char + 1
+    117          }
+    118          display_changed = YES;
+   \                     ??screen_counter_7:
+   \   000070   D243....     MOV.B   #0x1, &display_changed
+    119          
+    120          value = RESET_INT;
+   \   000074   0F43         MOV.W   #0x0, R15
+    121          while (counter_char > TENTHS_LIMIT){
+   \                     ??screen_counter_2:
+   \   000076   B2900A00.... CMP.W   #0xa, &counter_char
+   \   00007C   0528         JNC     ??screen_counter_8
+    122          counter_char = counter_char - TENTHS_CONVERTER;
+   \   00007E   B250F6FF.... ADD.W   #0xfff6, &counter_char
+    123          value = value + VALUE_COUNTER;
+   \   000084   1F53         ADD.W   #0x1, R15
+   \   000086   F73F         JMP     ??screen_counter_2
+    124          }
+    125          adc_char[ADC_CHAR2] = ASCI_CONVERTER + value;
+   \                     ??screen_counter_8:
+   \   000088   0E12         PUSH.W  R14
+   \   00008A   C14F0000     MOV.B   R15, 0(SP)
+   \   00008E   3E41         POP.W   R14
+   \   000090   7E503000     ADD.B   #0x30, R14
+   \   000094   C24E....     MOV.B   R14, &adc_char + 2
+    126          if (adc_char[ADC_CHAR2] == ASCI_ZERO){
+   \   000098   C293....     CMP.B   #0x0, &adc_char + 2
+   \   00009C   0320         JNE     ??screen_counter_9
+    127            adc_char[ADC_CHAR2] = '0';
+   \   00009E   F2403000.... MOV.B   #0x30, &adc_char + 2
+    128          }
+    129          
+    130            adc_char[ADC_CHAR3] = ASCI_CONVERTER + counter_char;
+   \                     ??screen_counter_9:
+   \   0000A4   5E42....     MOV.B   &counter_char, R14
+   \   0000A8   7E503000     ADD.B   #0x30, R14
+   \   0000AC   C24E....     MOV.B   R14, &adc_char + 3
+    131          
+    132                display_line[DISPLAY_L4][DISPLAY_CHAR6] = adc_char[ADC_CHAR0];
+   \   0000B0   D242........ MOV.B   &adc_char, &display_line + 39
+    133                display_line[DISPLAY_L4][DISPLAY_CHAR7] = adc_char[ADC_CHAR1];
+   \   0000B6   D242........ MOV.B   &adc_char + 1, &display_line + 40
+    134                display_line[DISPLAY_L4][DISPLAY_CHAR8] = adc_char[ADC_CHAR2];
+   \   0000BC   D242........ MOV.B   &adc_char + 2, &display_line + 41
+    135                display_line[DISPLAY_L4][DISPLAY_CHAR9] = adc_char[ADC_CHAR3];
+   \   0000C2   D242........ MOV.B   &adc_char + 3, &display_line + 42
+    136          }
+    137          
+    138          }
+   \                     ??screen_counter_3:
+   \   0000C8   1001         RETA
+    139          //******************************************************************************
+    140          //------------------------------------------------------------------------------
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      6   HEXtoBCD
+      6   screen_counter
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     220  HEXtoBCD
+      10  adc_char
+       2  counter_char
+       2  left_val
+       2  right_val
+     202  screen_counter
+
+ 
+ 422 bytes in segment CODE
+  16 bytes in segment DATA16_Z
+ 
+ 422 bytes of CODE memory
+  16 bytes of DATA memory
+
+Errors: none
+Warnings: none

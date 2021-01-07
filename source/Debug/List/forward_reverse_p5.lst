@@ -1,0 +1,259 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           01/Nov/2019  10:00:43
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Homework
+#        08\forward_reverse_p5.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EWADAB.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Homework 08\forward_reverse_p5.c" -lC
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Homework 08\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Homework 08\Debug\Obj"
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Homework
+#        08\Debug\List\forward_reverse_p5.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Homework
+#        08\Debug\Obj\forward_reverse_p5.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Homework 08\forward_reverse_p5.c
+      1          //===========================================================================
+      2          // File Name : led.c
+      3          //
+      4          // Description: This file contains the Initialization for all port pins
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 9/11/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h"
+     12          #include  "msp430.h"
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          
+     16          extern volatile unsigned int one_s_passed_port;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     17          unsigned int state_demo ;
+   \                     state_demo:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     18          volatile unsigned int time_run;
+   \                     time_run:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     19          volatile unsigned int time_pause;
+   \                     time_pause:
+   \   000000                DS8 2
+     20          extern volatile unsigned int run_complete;    //p5
+     21          extern volatile unsigned int pause_complete;      //p5
+     22          extern volatile unsigned int run_counter;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     23          unsigned int display_menu_state;
+   \                     display_menu_state:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          unsigned int called_off;
+   \                     called_off:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     25          unsigned int one_time_state;
+   \                     one_time_state:
+   \   000000                DS8 2
+
+   \                                 In  segment CODE, align 2
+     26          void forward_rev(void){
+   \                     forward_rev:
+     27          //------------------------------------------------------------------------------
+     28          // Fordward Reverse demo Configurations
+     29          //------------------------------------------------------------------------------
+     30          //Checking if function has been called
+     31            if(one_s_passed_port){
+   \   000000   8293....     CMP.W   #0x0, &one_s_passed_port
+   \   000004   0624         JEQ     ??forward_rev_0
+     32              one_s_passed_port = NO;
+   \   000006   8243....     MOV.W   #0x0, &one_s_passed_port
+     33              state_demo = STATE_1; 
+   \   00000A   9243....     MOV.W   #0x1, &state_demo
+     34              one_time_state = YES;
+   \   00000E   9243....     MOV.W   #0x1, &one_time_state
+     35              
+     36            }
+     37            if((state_demo == STATE_1)&&(one_time_state)){
+   \                     ??forward_rev_0:
+   \   000012   9293....     CMP.W   #0x1, &state_demo
+   \   000016   0B20         JNE     ??forward_rev_1
+   \   000018   8293....     CMP.W   #0x0, &one_time_state
+   \   00001C   0824         JEQ     ??forward_rev_1
+     38                  one_time_state = NO;
+   \   00001E   8243....     MOV.W   #0x0, &one_time_state
+     39                  display_menu_state = YES;       //forward
+   \   000022   9243....     MOV.W   #0x1, &display_menu_state
+     40                  display_menu();
+   \   000026   ........     CALLA   #display_menu
+     41                  wheels_forwardpwm();
+   \   00002A   ........     BRA     #wheels_forwardpwm
+     42            }else if(run_counter == TIME_1){
+   \                     ??forward_rev_1:
+   \   00002E   B290DC00.... CMP.W   #0xdc, &run_counter
+   \   000034   0620         JNE     ??forward_rev_2
+     43                  display_menu_state = STATE_2;       //off
+   \   000036   A243....     MOV.W   #0x2, &display_menu_state
+     44                  display_menu();
+   \   00003A   ........     CALLA   #display_menu
+     45                  wheels_offpwm();
+   \   00003E   ........     BRA     #wheels_offpwm
+     46            }else if(run_counter == TIME_2){
+   \                     ??forward_rev_2:
+   \   000042   B290B801.... CMP.W   #0x1b8, &run_counter
+   \   000048   0720         JNE     ??forward_rev_3
+     47                  display_menu_state = STATE_3;       //reverse
+   \   00004A   B2400300.... MOV.W   #0x3, &display_menu_state
+     48                  display_menu();
+   \   000050   ........     CALLA   #display_menu
+     49                  wheels_reversepwm();
+   \   000054   ........     BRA     #wheels_reversepwm
+     50            }else if(run_counter == TIME_3){
+   \                     ??forward_rev_3:
+   \   000058   B2907003.... CMP.W   #0x370, &run_counter
+   \   00005E   0620         JNE     ??forward_rev_4
+     51                  display_menu_state = STATE_2;       //off
+   \   000060   A243....     MOV.W   #0x2, &display_menu_state
+     52                  display_menu();
+   \   000064   ........     CALLA   #display_menu
+     53                  wheels_offpwm();
+   \   000068   ........     BRA     #wheels_offpwm
+     54            }else if(run_counter == TIME_4){
+   \                     ??forward_rev_4:
+   \   00006C   B2904C04.... CMP.W   #0x44c, &run_counter
+   \   000072   0620         JNE     ??forward_rev_5
+     55                  display_menu_state = STATE_1;       //forward
+   \   000074   9243....     MOV.W   #0x1, &display_menu_state
+     56                  display_menu();
+   \   000078   ........     CALLA   #display_menu
+     57                  wheels_forwardpwm();
+   \   00007C   ........     BRA     #wheels_forwardpwm
+     58            }else if(run_counter == TIME_5){
+   \                     ??forward_rev_5:
+   \   000080   B2902805.... CMP.W   #0x528, &run_counter
+   \   000086   0620         JNE     ??forward_rev_6
+     59                  display_menu_state = STATE_2;       //off
+   \   000088   A243....     MOV.W   #0x2, &display_menu_state
+     60                  display_menu();
+   \   00008C   ........     CALLA   #display_menu
+     61                  wheels_offpwm();
+   \   000090   ........     BRA     #wheels_offpwm
+     62            }else if(run_counter == TIME_6){
+   \                     ??forward_rev_6:
+   \   000094   B2900406.... CMP.W   #0x604, &run_counter
+   \   00009A   0620         JNE     ??forward_rev_7
+     63                  display_menu_state = STATE_4;       //clock-wise
+   \   00009C   A242....     MOV.W   #0x4, &display_menu_state
+     64                  display_menu();
+   \   0000A0   ........     CALLA   #display_menu
+     65                  wheels_clkwise_pwm();
+   \   0000A4   ........     BRA     #wheels_clkwise_pwm
+     66            }else if(run_counter == TIME_7){
+   \                     ??forward_rev_7:
+   \   0000A8   B2909808.... CMP.W   #0x898, &run_counter
+   \   0000AE   0620         JNE     ??forward_rev_8
+     67                  display_menu_state = STATE_2;       //off
+   \   0000B0   A243....     MOV.W   #0x2, &display_menu_state
+     68                  display_menu();        
+   \   0000B4   ........     CALLA   #display_menu
+     69                  wheels_offpwm();
+   \   0000B8   ........     BRA     #wheels_offpwm
+     70            }else if(run_counter == TIME_8){
+   \                     ??forward_rev_8:
+   \   0000BC   B290500A.... CMP.W   #0xa50, &run_counter
+   \   0000C2   0720         JNE     ??forward_rev_9
+     71                  display_menu_state = STATE_5;       //ctr-clockwise
+   \   0000C4   B2400500.... MOV.W   #0x5, &display_menu_state
+     72                  display_menu();
+   \   0000CA   ........     CALLA   #display_menu
+     73                  wheels_ctrclkwise_pwm();
+   \   0000CE   ........     BRA     #wheels_ctrclkwise_pwm
+     74            }else if(run_counter == TIME_9){
+   \                     ??forward_rev_9:
+   \   0000D2   B290E40C.... CMP.W   #0xce4, &run_counter
+   \   0000D8   0620         JNE     ??forward_rev_10
+     75                  display_menu_state = STATE_2;       //off
+   \   0000DA   A243....     MOV.W   #0x2, &display_menu_state
+     76                  display_menu();
+   \   0000DE   ........     CALLA   #display_menu
+     77                  wheels_offpwm();
+   \   0000E2   ........     CALLA   #wheels_offpwm
+     78            }
+     79            
+     80          
+     81          //------------------------------------------------------------------------------
+     82          }
+   \                     ??forward_rev_10:
+   \   0000E6   1001         RETA
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   forward_rev
+        4   -> display_menu
+        0   -> wheels_clkwise_pwm
+        0   -> wheels_ctrclkwise_pwm
+        0   -> wheels_forwardpwm
+        0   -> wheels_offpwm
+        4   -> wheels_offpwm
+        0   -> wheels_reversepwm
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  called_off
+       2  display_menu_state
+     232  forward_rev
+       2  one_time_state
+       2  state_demo
+       2  time_pause
+       2  time_run
+
+ 
+ 232 bytes in segment CODE
+  12 bytes in segment DATA16_Z
+ 
+ 232 bytes of CODE memory
+  12 bytes of DATA memory
+
+Errors: none
+Warnings: none

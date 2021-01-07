@@ -1,0 +1,679 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  19:30:58
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\main.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EW5D6C.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\main.c" -lC "C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o "C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\main.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\main.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\main.c
+      1          //------------------------------------------------------------------------------
+      2          //  File Name : main.c
+      3          //  Description: This file contains the Main Routine - "While" Operating System
+      4          //
+      5          //
+      6          //  Jim Carlson
+      7          //  Jan 2018
+      8          //  Built with IAR Embedded Workbench Version: V(7.12.4)
+      9          //------------------------------------------------------------------------------
+     10          
+     11          //------------------------------------------------------------------------------
+     12          #include  "functions.h"
+     13          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x242
+   \   union <unnamed> _A_PCOUT_L
+   \                     _A_PCOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x24a
+   \   union <unnamed> _A_PCSEL0_L
+   \                     _A_PCSEL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x24c
+   \   union <unnamed> _A_PCSEL1_L
+   \                     _A_PCSEL1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x130
+   \   union <unnamed> _A_PM5CTL0_L
+   \                     _A_PM5CTL0_L:
+   \   000000                DS8 2
+     14          #include <string.h>
+     15          #include "macros.h"
+     16          
+     17          // Global Variables
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     18          volatile char slow_input_down;
+   \                     slow_input_down:
+   \   000000                DS8 1
+     19          extern char display_line[NUM_OF_ROWS][NUM_0F_COLS];
+     20          extern char test_command[STRING_SIZE_10];
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     21          char message_keeper[STRING_SIZE_10];
+   \                     message_keeper:
+   \   000000                DS8 10
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     22          char message_keeper1[STRING_SIZE_10];
+   \                     message_keeper1:
+   \   000000                DS8 10
+     23          extern char adc_char[STRING_SIZE_10];
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          char display_keeper[STRING_SIZE_11];
+   \                     display_keeper:
+   \   000000                DS8 11
+     25          extern char *display[NUM_OF_ROWS];
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     26          unsigned char display_mode;
+   \                     display_mode:
+   \   000000                DS8 1
+     27          extern volatile unsigned char display_changed;
+     28          extern volatile unsigned char update_display;
+     29          extern volatile unsigned int update_display_count;
+     30          extern volatile unsigned int Time_Sequence;
+     31          extern volatile char one_time;
+     32          extern volatile unsigned int clockdiv_count;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          volatile unsigned int circle_timer_count;
+   \                     circle_timer_count:
+   \   000000                DS8 2
+     34          extern unsigned int figure;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     35          volatile unsigned int onoff;
+   \                     onoff:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     36          volatile unsigned int line_state;
+   \                     line_state:
+   \   000000                DS8 2
+     37          extern unsigned int UCA0_index;
+     38          extern volatile unsigned int p4_counter ;
+     39          extern volatile unsigned int p2_counter ;
+     40          extern unsigned int display_menu_state;
+     41          extern unsigned int once;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     42          unsigned int once_arr;
+   \                     once_arr:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     43          int i;
+   \                     i:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     44          int read;
+   \                     `read`:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     45          volatile int store_once;
+   \                     store_once:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     46          volatile unsigned display_putty;
+   \                     display_putty:
+   \   000000                DS8 2
+     47          extern volatile int check_command_once;
+     48          
+     49          extern volatile char USB_Char_Rx[SMALL_RING_SIZE] ;
+     50          extern volatile unsigned int usb_rx_ring_wr;
+     51          extern volatile unsigned int usb_rx_ring_rd;
+     52          extern volatile unsigned int seriarport_ON_OFF;
+     53          extern volatile unsigned int clear_array;
+     54          extern volatile int check_value_once;
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     55          volatile char command_keeper[11];
+   \                     command_keeper:
+   \   000000                DS8 11
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     56          volatile unsigned int low_once;
+   \                     low_once:
+   \   000000                DS8 2
+     57          
+     58          extern unsigned int ADC_Channel;
+     59          extern unsigned int ADC_Left_Detect;
+     60          extern unsigned int ADC_Right_Detect;
+     61          extern unsigned int ADC_Thumb;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     62          unsigned int enable_200ms_counter;
+   \                     enable_200ms_counter:
+   \   000000                DS8 2
+     63          //extern unsigned int ADC_Channel;
+     64          //extern unsigned int ADC_Left_Detect;
+     65          //extern unsigned int ADC_Right_Detect;
+     66          //extern unsigned int ADC_Thumb;
+     67          // Function Prototypes
+     68          void main(void);
+     69          extern volatile unsigned int enable_setup_commands;
+     70          extern volatile unsigned int enable_iot_port_number;
+     71          extern volatile unsigned int clear_iot_command;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     72          unsigned int record_command;
+   \                     record_command:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     73          volatile char command_stack[3][30];
+   \                     command_stack:
+   \   000000                DS8 90
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     74          unsigned int stack_row;
+   \                     stack_row:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     75          volatile unsigned int command_start_end;
+   \                     command_start_end:
+   \   000000                DS8 2
+     76          extern volatile unsigned int clear_command_stack;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     77          volatile unsigned int ready_to_read_stack;
+   \                     ready_to_read_stack:
+   \   000000                DS8 2
+     78          extern unsigned int number_of_commands;
+     79          //[rows][cols]
+     80          extern volatile unsigned int command_library1;
+     81          extern volatile unsigned int command_library2;
+     82          extern volatile unsigned int command_library3;
+     83          extern volatile unsigned int command_library_state;
+     84          
+     85          
+
+   \                                 In  segment CODE, align 2
+     86          void main(void){
+   \                     main:
+     87          //------------------------------------------------------------------------------
+     88          // Main Program
+     89          // This is the main routine for the program. Execution of code starts here.
+     90          // The operating system is Back Ground Fore Ground.
+     91          //
+     92          //------------------------------------------------------------------------------
+     93          // Disable the GPIO power-on default high-impedance mode to activate
+     94          // previously configured port settings
+     95            PM5CTL0 &= ~LOCKLPM5;
+   \   000000   92C33001     BIC.W   #0x1, &0x130
+     96            Init_Ports();                        // Initialize Ports
+   \   000004   ........     CALLA   #Init_Ports
+     97            Init_Clocks();                       // Initialize Clock System
+   \   000008   ........     CALLA   #Init_Clocks
+     98            Init_Conditions();                   // Initialize Variables and Initial Conditions
+   \   00000C   ........     CALLA   #Init_Conditions
+     99            Init_Timers();                       // Initialize Timers
+   \   000010   ........     CALLA   #Init_Timers
+    100            Init_LCD();                          // Initialize LCD
+   \   000014   ........     CALLA   #Init_LCD
+    101            //Init_ADC();                          //Initializing ADC 
+    102            Init_Serial_UCA0();
+   \   000018   ........     CALLA   #Init_Serial_UCA0
+    103            Init_Serial_UCA1();
+   \   00001C   ........     CALLA   #Init_Serial_UCA1
+    104             
+    105            
+    106          // Place the contents of what you want on the display, in between the quotes
+    107          // Limited to 10 characters per line
+    108          //Funtion Reference: void update_string(char *string_data, int string);
+    109            strcpy(display_line[DISPLAY_L1], "   NCSU   ");
+   \   000020   3D40....     MOV.W   #`?<Constant "   NCSU   ">`, R13
+   \   000024   3C40....     MOV.W   #display_line, R12
+   \   000028   ........     CALLA   #strcpy
+    110            update_string(display_line[DISPLAY_L1], DISPLAY_L1);
+   \   00002C   0D43         MOV.W   #0x0, R13
+   \   00002E   ........     CALLA   #update_string
+    111            strcpy(display_line[DISPLAY_L2], " WOLFPACK ");
+   \   000032   3D40....     MOV.W   #`?<Constant " WOLFPACK ">`, R13
+   \   000036   3C40....     MOV.W   #display_line + 11, R12
+   \   00003A   ........     CALLA   #strcpy
+    112            update_string(display_line[DISPLAY_L2], DISPLAY_L2);
+   \   00003E   1D43         MOV.W   #0x1, R13
+   \   000040   3C40....     MOV.W   #display_line + 11, R12
+   \   000044   ........     CALLA   #update_string
+    113            strcpy(display_line[DISPLAY_L3], "  ECE306  ");
+   \   000048   3D40....     MOV.W   #`?<Constant "  ECE306  ">`, R13
+   \   00004C   3C40....     MOV.W   #display_line + 22, R12
+   \   000050   ........     CALLA   #strcpy
+    114            update_string(display_line[DISPLAY_L4], DISPLAY_L4);
+   \   000054   3D400300     MOV.W   #0x3, R13
+   \   000058   3C40....     MOV.W   #display_line + 33, R12
+   \   00005C   ........     CALLA   #update_string
+    115            enable_display_update();
+   \   000060   ........     CALLA   #enable_display_update
+    116          
+    117           // strcpy(test_command, "NCSU  #1  ");
+    118           
+    119            display_changed = YES; 
+   \   000064   D243....     MOV.B   #0x1, &display_changed
+    120            P6OUT &= ~LCD_BACKLITE;
+   \   000068   F2C010004302 BIC.B   #0x10, &0x243
+    121          once =1;
+   \   00006E   9243....     MOV.W   #0x1, &once
+    122          low_once=1;
+   \   000072   9243....     MOV.W   #0x1, &low_once
+    123          enable_setup_commands=0;
+   \   000076   8243....     MOV.W   #0x0, &enable_setup_commands
+    124          enable_iot_port_number = 0;
+   \   00007A   8243....     MOV.W   #0x0, &enable_iot_port_number
+    125          
+    126          //  Display_Update(3,1,0,0);
+    127          //    P6OUT |= R_FORWARD;              //TESTING 
+    128          //    P6OUT |= L_FORWARD;              //TESTING
+    129          //hw5 stuff
+    130          //  clockdiv_count = RESET_COUNTER;       //Reset counter
+    131          //  figure = 0;
+    132          //  circle_timer_count = 0;
+    133          //------------------------------------------------------------------------------
+    134          // Begining of the "While" Operating System
+    135          //------------------------------------------------------------------------------
+    136            while(ALWAYS) {                      // Can the Operating system run
+    137              
+    138              if(low_once == YES){
+   \                     ??main_0:
+   \   00007E   9293....     CMP.W   #0x1, &low_once
+   \   000082   0C20         JNE     ??main_7
+    139                Init_LEDs();
+   \   000084   ........     CALLA   #Init_LEDs
+    140                clear_stack();
+   \   000088   ........     CALLA   #clear_stack
+    141                P5SEL0 &= ~IOT_RESET;             //IOT_RESET signal selection
+   \   00008C   D2C34A02     BIC.B   #0x1, &0x24a
+    142                P5SEL1 &= ~IOT_RESET;             //IOT_RESET signal selection
+   \   000090   D2C34C02     BIC.B   #0x1, &0x24c
+    143                enable_200ms_counter = YES;
+   \   000094   9243....     MOV.W   #0x1, &enable_200ms_counter
+    144                low_once=NO;
+   \   000098   8243....     MOV.W   #0x0, &low_once
+    145              }
+    146          
+    147                switch(Time_Sequence){
+   \                     ??main_7:
+   \   00009C   1F42....     MOV.W   &Time_Sequence, R15
+   \   0000A0   3F803200     SUB.W   #0x32, R15
+   \   0000A4   3224         JEQ     ??main_8
+   \   0000A6   3F803200     SUB.W   #0x32, R15
+   \   0000AA   2324         JEQ     ??main_9
+   \   0000AC   3F803200     SUB.W   #0x32, R15
+   \   0000B0   1824         JEQ     ??main_10
+   \   0000B2   3F803200     SUB.W   #0x32, R15
+   \   0000B6   0D24         JEQ     ??main_11
+   \   0000B8   3F803200     SUB.W   #0x32, R15
+   \   0000BC   2D20         JNE     ??main_6
+    148                case CASE_250:                        //
+    149                  if(one_time){
+   \   0000BE   C293....     CMP.B   #0x0, &one_time
+   \   0000C2   0424         JEQ     ??main_12
+    150                    //Init_LEDs();
+    151                    //lcd_BIG_mid();
+    152                    display_changed = CHANGE_DISP;
+   \   0000C4   D243....     MOV.B   #0x1, &display_changed
+    153                    one_time = ONE_TIME_ZERO;
+   \   0000C8   C243....     MOV.B   #0x0, &one_time
+    154                    //screen_counter();
+    155                  }
+    156                  Time_Sequence = RESET_TIMER;             //
+   \                     ??main_12:
+   \   0000CC   8243....     MOV.W   #0x0, &Time_Sequence
+    157                  break;
+   \   0000D0   233C         JMP     ??main_6
+    158                case CASE_200:                        //
+    159                  if(one_time){
+   \                     ??main_11:
+   \   0000D2   C293....     CMP.B   #0x0, &one_time
+   \   0000D6   2024         JEQ     ??main_6
+    160           //         GREEN_LED_ON;            // Change State of LED 5
+    161                    one_time = ONE_TIME_ZERO;
+   \   0000D8   C243....     MOV.B   #0x0, &one_time
+    162                         display_menu();
+   \   0000DC   ........     CALLA   #display_menu
+    163                  }
+    164                  break;
+   \   0000E0   1B3C         JMP     ??main_6
+    165                case CASE_150:                         //
+    166                  if(one_time){
+   \                     ??main_10:
+   \   0000E2   C293....     CMP.B   #0x0, &one_time
+   \   0000E6   1824         JEQ     ??main_6
+    167           //         RED_LED_ON;            // Change State of LED 4
+    168           //         GREEN_LED_OFF;           // Change State of LED 5
+    169                    one_time = ONE_TIME_ZERO;
+   \   0000E8   C243....     MOV.B   #0x0, &one_time
+    170                    clear_iot_command_array();
+   \   0000EC   ........     CALLA   #clear_iot_command_array
+    171          
+    172                  }
+    173                  break;
+   \   0000F0   133C         JMP     ??main_6
+    174                case CASE_100:                         //
+    175                  if(one_time){
+   \                     ??main_9:
+   \   0000F2   C293....     CMP.B   #0x0, &one_time
+   \   0000F6   1024         JEQ     ??main_6
+    176                    //lcd_4line();
+    177          //          GREEN_LED_ON;            // Change State of LED 5
+    178                    display_changed = CHANGE_DISP;
+   \   0000F8   D243....     MOV.B   #0x1, &display_changed
+    179                    one_time = ONE_TIME_ZERO;
+   \   0000FC   C243....     MOV.B   #0x0, &one_time
+    180                    iot_port_setup();     //ADD PORT SETUP HERE
+   \   000100   ........     CALLA   #iot_port_setup
+    181                    display_menu();
+   \   000104   ........     CALLA   #display_menu
+    182                  }
+    183                  break;
+   \   000108   073C         JMP     ??main_6
+    184                case  CASE_50:                        //
+    185                  if(one_time){
+   \                     ??main_8:
+   \   00010A   C293....     CMP.B   #0x0, &one_time
+   \   00010E   0424         JEQ     ??main_6
+    186          //          RED_LED_OFF;           // Change State of LED 4
+    187          //          GREEN_LED_OFF;           // Change State of LED 5
+    188                    one_time = ONE_TIME_ZERO;
+   \   000110   C243....     MOV.B   #0x0, &one_time
+    189                    dissasemby_setup();    //ADD DISASSOCIATION THING HERE
+   \   000114   ........     CALLA   #dissasemby_setup
+    190                    
+    191                  }
+    192                  break;                         //
+    193                default: break;
+    194                }
+    195             if(clear_command_stack == CLEAR_COMMAND_S1){
+   \                     ??main_6:
+   \   000118   9293....     CMP.W   #0x1, &clear_command_stack
+   \   00011C   0620         JNE     ??main_13
+    196                clear_stack();              //the stack will reset
+   \   00011E   ........     CALLA   #clear_stack
+    197                stack_row=RESET_INDEX;
+   \   000122   8243....     MOV.W   #0x0, &stack_row
+    198                clear_command_stack++;            //adds one to stop clear_stack
+   \   000126   9253....     ADD.W   #0x1, &clear_command_stack
+    199              }
+    200              if(clear_command_stack >=CLEAR_COMMAND_S3){  //from the last part of input
+   \                     ??main_13:
+   \   00012A   B2900300.... CMP.W   #0x3, &clear_command_stack
+   \   000130   0428         JNC     ??main_14
+    201              clear_command_stack = NO;            //gets ready for next string
+   \   000132   8243....     MOV.W   #0x0, &clear_command_stack
+    202              ready_to_read_stack = YES;
+   \   000136   9243....     MOV.W   #0x1, &ready_to_read_stack
+    203              }
+    204          
+    205                if(usb_rx_ring_rd != usb_rx_ring_wr){
+                       ^
+Warning[Pa082]: undefined behavior: the order of volatile accesses is undefined
+          in this statement
+   \                     ??main_14:
+   \   00013A   1F42....     MOV.W   &usb_rx_ring_rd, R15
+   \   00013E   1F92....     CMP.W   &usb_rx_ring_wr, R15
+   \   000142   4024         JEQ     ??main_15
+    206                 //if(USB_Char_Rx[usb_rx_ring_rd] == 1B){//counts the escapes in a command
+    207                 //    command_start_end ++;
+    208                 //}
+    209                  if(USB_Char_Rx[usb_rx_ring_rd] == '^' ){
+   \   000144   1F42....     MOV.W   &usb_rx_ring_rd, R15
+   \   000148   FF905E00.... CMP.B   #0x5e, USB_Char_Rx(R15)
+   \   00014E   0620         JNE     ??main_16
+    210                      record_command = YES;
+   \   000150   9243....     MOV.W   #0x1, &record_command
+    211                      i=RESET_COUNTER;
+   \   000154   8243....     MOV.W   #0x0, &i
+    212                      stack_row++;
+   \   000158   9253....     ADD.W   #0x1, &stack_row
+    213                  }
+    214                  if(stack_row > STACK_SIZE){              //Command stack can hold up to 3 commands
+   \                     ??main_16:
+   \   00015C   A292....     CMP.W   #0x4, &stack_row
+   \   000160   0428         JNC     ??main_17
+    215                      stack_row =RESET_COUNTER;               //if there is more
+   \   000162   8243....     MOV.W   #0x0, &stack_row
+    216                      clear_stack();              //the stack will reset
+   \   000166   ........     CALLA   #clear_stack
+    217                  }
+    218                  if (i>LAST_COMMAND_CHAR){                      //string command cannot be more than 30 chars
+   \                     ??main_17:
+   \   00016A   B2901E00.... CMP.W   #0x1e, &i
+   \   000170   0238         JL      ??main_18
+    219                    i=RESET_COUNTER;
+   \   000172   8243....     MOV.W   #0x0, &i
+    220                  }
+    221                  if(record_command == YES){        //record is enabled when there is a ^
+   \                     ??main_18:
+   \   000176   9293....     CMP.W   #0x1, &record_command
+   \   00017A   1A20         JNE     ??main_19
+    222                    command_stack[stack_row - ADJUSTMENT_FOR_ARRAY][i] = USB_Char_Rx[usb_rx_ring_rd];
+   \   00017C   1F42....     MOV.W   &usb_rx_ring_rd, R15
+   \   000180   1E42....     MOV.W   &i, R14
+   \   000184   1D42....     MOV.W   &stack_row, R13
+   \   000188   0D5D         RLA.W   R13
+   \   00018A   0C4D         MOV.W   R13, R12
+   \   00018C   0D5D         RLA.W   R13
+   \   00018E   0C5D         ADD.W   R13, R12
+   \   000190   0D5D         RLA.W   R13
+   \   000192   0C5D         ADD.W   R13, R12
+   \   000194   0D5D         RLA.W   R13
+   \   000196   0D5C         ADD.W   R12, R13
+   \   000198   0E5D         ADD.W   R13, R14
+   \   00019A   DE4F........ MOV.B   USB_Char_Rx(R15), LWRD(command_stack + 65506)(R14)
+    223                        if(USB_Char_Rx[usb_rx_ring_rd] == '\r'){
+   \   0001A0   1F42....     MOV.W   &usb_rx_ring_rd, R15
+   \   0001A4   FF900D00.... CMP.B   #0xd, USB_Char_Rx(R15)
+   \   0001AA   0220         JNE     ??main_19
+    224                        record_command = NO;     //record is disable when there is a \r
+   \   0001AC   8243....     MOV.W   #0x0, &record_command
+    225                        }
+    226                  }
+    227                  usb_rx_ring_rd++;       //increment ring pointer
+   \                     ??main_19:
+   \   0001B0   9253....     ADD.W   #0x1, &usb_rx_ring_rd
+    228                  i++;                    //increment command pointer
+   \   0001B4   9253....     ADD.W   #0x1, &i
+    229                  if(usb_rx_ring_rd > RING_BUFF_SIZE){    //if ring reaches limit
+   \   0001B8   B2901000.... CMP.W   #0x10, &usb_rx_ring_rd
+   \   0001BE   0228         JNC     ??main_15
+    230                      usb_rx_ring_rd = RESET_COUNTER;     // reset
+   \   0001C0   8243....     MOV.W   #0x0, &usb_rx_ring_rd
+    231                    }   
+    232                }
+    233              
+    234              if((number_of_commands == stack_row)&&(record_command ==NO)){
+   \                     ??main_15:
+   \   0001C4   9292........ CMP.W   &stack_row, &number_of_commands
+   \   0001CA   0920         JNE     ??main_20
+   \   0001CC   8293....     CMP.W   #0x0, &record_command
+   \   0001D0   0620         JNE     ??main_20
+    235                  command_stack_process();
+   \   0001D2   ........     CALLA   #command_stack_process
+    236                  number_of_commands=RESET_COUNTER;
+   \   0001D6   8243....     MOV.W   #0x0, &number_of_commands
+    237                  clear_stack(); 
+   \   0001DA   ........     CALLA   #clear_stack
+    238              }
+    239              
+    240          
+    241               // display_menu();
+    242                command_library();
+   \                     ??main_20:
+   \   0001DE   ........     CALLA   #command_library
+    243                command_call_timed();
+   \   0001E2   ........     CALLA   #command_call_timed
+    244                
+    245                screen_counter();
+   \   0001E6   ........     CALLA   #screen_counter
+    246                //carlson's commands
+    247                 Display_Process();
+   \   0001EA   ........     CALLA   #Display_Process
+   \   0001EE   473F         JMP     ??main_0
+   \   0001F0   0343         NOP
+   \   0001F2                REQUIRE _A_PM5CTL0_L
+   \   0001F2                REQUIRE _A_PCOUT_L
+   \   0001F2                REQUIRE _A_PCSEL0_L
+   \   0001F2                REQUIRE _A_PCSEL1_L
+    248          
+    249          //      Switches_Process();                // Check for switch state change 
+    250          //      line_detect();
+    251          //      switch_func();
+    252          //      figure_call();
+    253          //      forward_rev();
+    254            }
+    255            
+    256          //    Wheels();
+    257          
+    258            }
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   NCSU   ">`:
+   \   000000   2020204E4353 DC8 "   NCSU   "
+   \            5520202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " WOLFPACK ">`:
+   \   000000   20574F4C4650 DC8 " WOLFPACK "
+   \            41434B2000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  ECE306  ">`:
+   \   000000   202045434533 DC8 "  ECE306  "
+   \            3036202000  
+    259          //------------------------------------------------------------------------------
+    260          
+    261          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   main
+        4   -> Display_Process
+        4   -> Init_Clocks
+        4   -> Init_Conditions
+        4   -> Init_LCD
+        4   -> Init_LEDs
+        4   -> Init_Ports
+        4   -> Init_Serial_UCA0
+        4   -> Init_Serial_UCA1
+        4   -> Init_Timers
+        4   -> clear_iot_command_array
+        4   -> clear_stack
+        4   -> command_call_timed
+        4   -> command_library
+        4   -> command_stack_process
+        4   -> display_menu
+        4   -> dissasemby_setup
+        4   -> enable_display_update
+        4   -> iot_port_setup
+        4   -> screen_counter
+        4   -> strcpy
+        4   -> update_string
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      11  ?<Constant "   NCSU   ">
+      11  ?<Constant "  ECE306  ">
+      11  ?<Constant " WOLFPACK ">
+       2  _A_PCOUT_L
+       2  _A_PCSEL0_L
+       2  _A_PCSEL1_L
+       2  _A_PM5CTL0_L
+       2  circle_timer_count
+      11  command_keeper
+      90  command_stack
+       2  command_start_end
+      11  display_keeper
+       1  display_mode
+       2  display_putty
+       2  enable_200ms_counter
+       2  i
+       2  line_state
+       2  low_once
+     498  main
+      10  message_keeper
+      10  message_keeper1
+       2  once_arr
+       2  onoff
+       2  read
+       2  ready_to_read_stack
+       2  record_command
+       1  slow_input_down
+       2  stack_row
+       2  store_once
+
+ 
+ 498 bytes in segment CODE
+   8 bytes in segment DATA16_AN
+  33 bytes in segment DATA16_C
+ 162 bytes in segment DATA16_Z
+ 
+ 498 bytes of CODE  memory
+  33 bytes of CONST memory
+ 162 bytes of DATA  memory (+ 8 bytes shared)
+
+Errors: none
+Warnings: 1

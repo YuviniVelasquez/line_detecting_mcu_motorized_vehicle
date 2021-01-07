@@ -1,0 +1,153 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  19:21:28
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\line_detect.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EWA95D.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\line_detect.c" -lC
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\Obj"
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\line_detect.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\line_detect.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\line_detect.c
+      1          //===========================================================================
+      2          // File Name : line_detect.c
+      3          //
+      4          // Description: This file contains the Initialization for all port pins
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 9/11/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h"
+     12          #include  "msp430.h"
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          
+     16          extern unsigned int left_val;
+     17          extern unsigned int right_val;
+     18          
+     19          extern volatile unsigned int line_state;
+     20          extern volatile unsigned int one_sec_count;
+     21          extern unsigned int enable_sec_count;
+     22          extern unsigned int counter_second;
+     23          
+
+   \                                 In  segment CODE, align 2
+     24          void line_detect(void){
+   \                     line_detect:
+     25          //------------------------------------------------------------------------------
+     26          // LED Configurations
+     27          //------------------------------------------------------------------------------
+     28            
+     29            if (line_state == LINE_STATE_1){
+   \   000000   9293....     CMP.W   #0x1, &line_state
+   \   000004   0420         JNE     ??line_detect_0
+     30              one_sec_count = START_1SEC;  //wait for 1 second
+   \   000006   9243....     MOV.W   #0x1, &one_sec_count
+     31              line_state = LINE_STATE_2 ;
+   \   00000A   A243....     MOV.W   #0x2, &line_state
+     32            }
+     33            if((line_state == LINE_STATE_2)&&(one_sec_count == ONE_SEC_COMPLETED)){   //once a second has passed and it's in state 2
+   \                     ??line_detect_0:
+   \   00000E   A293....     CMP.W   #0x2, &line_state
+   \   000012   1220         JNE     ??line_detect_1
+   \   000014   A293....     CMP.W   #0x2, &one_sec_count
+   \   000018   0F20         JNE     ??line_detect_1
+     34              if ((left_val > DARK_VALUE_L1)||(right_val > DARK_VALUE_L1 )){    //check if there is a black like
+   \   00001A   B2909700.... CMP.W   #0x97, &left_val
+   \   000020   042C         JC      ??line_detect_2
+   \   000022   B2909700.... CMP.W   #0x97, &right_val
+   \   000028   0728         JNC     ??line_detect_1
+     35                  line_state=LINE_STATE_3;
+   \                     ??line_detect_2:
+   \   00002A   B2400300.... MOV.W   #0x3, &line_state
+     36                  wheels_offpwm();
+   \   000030   ........     CALLA   #wheels_offpwm
+     37                  one_sec_count = START_1SEC;
+   \   000034   9243....     MOV.W   #0x1, &one_sec_count
+     38              }  
+     39            }
+     40            if((line_state == LINE_STATE_3)&&(one_sec_count == ONE_SEC_COMPLETED)){
+   \                     ??line_detect_1:
+   \   000038   B2900300.... CMP.W   #0x3, &line_state
+   \   00003E   0720         JNE     ??line_detect_3
+   \   000040   A293....     CMP.W   #0x2, &one_sec_count
+   \   000044   0420         JNE     ??line_detect_3
+     41                  wheels_clkwiseslow_pwm();
+   \   000046   ........     CALLA   #wheels_clkwiseslow_pwm
+     42                  line_state = LINE_STATE_4;
+   \   00004A   A242....     MOV.W   #0x4, &line_state
+     43                }
+     44            if(line_state == LINE_STATE_4){
+   \                     ??line_detect_3:
+   \   00004E   A292....     CMP.W   #0x4, &line_state
+   \   000052   0D20         JNE     ??line_detect_4
+     45              if ((left_val > DARK_VALUE_L4 )&&(right_val < DARK_VALUE_L1_5  )){    //check if there is a white line
+   \   000054   B2905902.... CMP.W   #0x259, &left_val
+   \   00005A   0928         JNC     ??line_detect_4
+   \   00005C   B290C800.... CMP.W   #0xc8, &right_val
+   \   000062   052C         JC      ??line_detect_4
+     46                  line_state=LINE_STATE_5;
+   \   000064   B2400500.... MOV.W   #0x5, &line_state
+     47                  wheels_offpwm();
+   \   00006A   ........     CALLA   #wheels_offpwm
+     48          
+     49              }
+     50            }
+     51            
+     52          
+     53            
+     54          //------------------------------------------------------------------------------
+     55          }
+   \                     ??line_detect_4:
+   \   00006E   1001         RETA
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   line_detect
+        4   -> wheels_clkwiseslow_pwm
+        4   -> wheels_offpwm
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     112  line_detect
+
+ 
+ 112 bytes in segment CODE
+ 
+ 112 bytes of CODE memory
+
+Errors: none
+Warnings: none

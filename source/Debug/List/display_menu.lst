@@ -1,0 +1,700 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  19:28:31
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\display_menu.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EW1DF8.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10\display_menu.c" -lC
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\Debug\Obj"
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files\IAR
+#        Systems\Embedded Workbench 8.0\430\lib\dlib\dl430xlsfn.h" -I ./\
+#        --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\List\display_menu.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project
+#        10\Debug\Obj\display_menu.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10\display_menu.c
+      1          //===========================================================================
+      2          // File Name : display_menu.c
+      3          //
+      4          // Description: This file contains the different menu options seen in LED
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 9/11/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h" 
+     12          #include  "msp430.h"
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          
+     16          
+     17          extern volatile unsigned int p4_counter ;
+     18          extern volatile unsigned int p2_counter ;
+     19          extern volatile unsigned int circle_timer_count;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     20          unsigned int display_menu_state;
+   \                     display_menu_state:
+   \   000000                DS8 2
+     21          
+     22          extern char display_line[NUM_OF_ROWS][NUM_0F_COLS];
+     23          extern char adc_char[10];
+     24          extern char *display[NUM_OF_ROWS];
+     25          extern char display_keeper[11];
+     26          extern char message_keeper[10];
+     27          
+     28          
+     29          extern unsigned char display_mode;
+     30          extern volatile unsigned char display_changed;
+     31          extern volatile unsigned char update_display;
+     32          extern volatile unsigned int update_display_count;
+     33          extern volatile unsigned int p4_counter ;
+     34          extern volatile unsigned int p2_counter ;
+     35          extern volatile unsigned int clear_array;
+     36          
+     37          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     38          unsigned int figure;
+   \                     figure:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     39          unsigned int display_counter;
+   \                     display_counter:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     40          unsigned int once;
+   \                     once:
+   \   000000                DS8 2
+     41          extern volatile int store_once;
+     42          extern volatile unsigned int five_sec_count;
+     43          extern volatile char command_keeper[11];
+     44          extern volatile unsigned int UCA0_index;
+     45          extern volatile unsigned int UCA1_index;
+     46          extern volatile unsigned int enable_circle_timer;               //enables circuit timer
+     47          
+     48          extern volatile unsigned display_putty;
+     49          extern volatile int check_command_once;
+     50          extern volatile unsigned int line_state;
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     51          char arrived_state[2];
+   \                     arrived_state:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     52          volatile unsigned int arrived_state_int;
+   \                     arrived_state_int:
+   \   000000                DS8 2
+     53          
+
+   \                                 In  segment CODE, align 2
+     54          void display_menu(void){
+   \                     display_menu:
+     55          //------------------------------------------------------------------------------
+     56          // LED Menu fsm
+     57          //------------------------------------------------------------------------------
+     58            if (display_menu_state == STATE_0){
+   \   000000   8293....     CMP.W   #0x0, &display_menu_state
+   \   000004   3E20         JNE     ??display_menu_2
+     59            
+     60              strcpy(display_line[DISPLAY_L1], "   NCSU   ");
+   \   000006   3D40....     MOV.W   #`?<Constant "   NCSU   ">`, R13
+   \   00000A   3C40....     MOV.W   #display_line, R12
+   \   00000E   ........     CALLA   #strcpy
+     61              update_string(display_line[DISPLAY_L1], DISPLAY_L1);   
+   \   000012   0D43         MOV.W   #0x0, R13
+   \   000014   ........     CALLA   #update_string
+     62              strcpy(display_line[DISPLAY_L2], "   WOLF   ");
+   \   000018   3D40....     MOV.W   #`?<Constant "   WOLF   ">`, R13
+   \   00001C   3C40....     MOV.W   #display_line + 11, R12
+   \   000020   ........     CALLA   #strcpy
+     63              update_string(display_line[DISPLAY_L2], DISPLAY_L2);
+   \   000024   1D43         MOV.W   #0x1, R13
+   \   000026   3C40....     MOV.W   #display_line + 11, R12
+   \   00002A   ........     CALLA   #update_string
+     64              strcpy(display_line[DISPLAY_L3], " PROJECT  ");
+   \   00002E   3D40....     MOV.W   #`?<Constant " PROJECT  ">`, R13
+   \   000032   3C40....     MOV.W   #display_line + 22, R12
+   \   000036   ........     CALLA   #strcpy
+     65              update_string(display_line[DISPLAY_L3], DISPLAY_L3);
+   \   00003A   2D43         MOV.W   #0x2, R13
+   \   00003C   3C40....     MOV.W   #display_line + 22, R12
+   \   000040   ........     CALLA   #update_string
+     66              strcpy(display_line[DISPLAY_L4], "    10    ");
+   \   000044   3D40....     MOV.W   #`?<Constant "    10    ">`, R13
+   \   000048   3C40....     MOV.W   #display_line + 33, R12
+   \   00004C   ........     CALLA   #strcpy
+     67              update_string(display_line[DISPLAY_L4], DISPLAY_L4);  
+   \   000050   3D400300     MOV.W   #0x3, R13
+   \   000054   3C40....     MOV.W   #display_line + 33, R12
+   \   000058   ........     CALLA   #update_string
+     68              display_changed = YES;
+   \   00005C   D243....     MOV.B   #0x1, &display_changed
+     69              if(once == YES){
+   \   000060   9293....     CMP.W   #0x1, &once
+   \   000064   0420         JNE     ??display_menu_3
+     70                five_sec_count = ENABLE_COUT;
+   \   000066   9243....     MOV.W   #0x1, &five_sec_count
+     71                once = NO;
+   \   00006A   8243....     MOV.W   #0x0, &once
+     72              }
+     73              if(five_sec_count == COUNT_COMPLETE){
+   \                     ??display_menu_3:
+   \   00006E   A293....     CMP.W   #0x2, &five_sec_count
+   \   000072   C520         JNE     ??display_menu_4
+     74                  display_menu_state =STATE_1;
+   \   000074   9243....     MOV.W   #0x1, &display_menu_state
+     75                  five_sec_count = DISABLE_COUNT;
+   \   000078   8243....     MOV.W   #0x0, &five_sec_count
+     76                  arrived_state_int = 0;
+   \   00007C   8243....     MOV.W   #0x0, &arrived_state_int
+   \   000080   1001         RETA
+     77              }
+     78            
+     79            }else if (display_menu_state == STATE_1){     //state 1 is IOT module
+   \                     ??display_menu_2:
+   \   000082   9293....     CMP.W   #0x1, &display_menu_state
+   \   000086   3D20         JNE     ??display_menu_5
+     80              arrived_state[0] = ASCI_CONVERTER + arrived_state_int;
+   \   000088   1E42....     MOV.W   &arrived_state_int, R14
+   \   00008C   7E503000     ADD.B   #0x30, R14
+   \   000090   C24E....     MOV.B   R14, &arrived_state
+     81              strcpy(display_line[DISPLAY_L1], "ARRIVED  ");
+   \   000094   3D40....     MOV.W   #`?<Constant "ARRIVED  ">`, R13
+   \   000098   3C40....     MOV.W   #display_line, R12
+   \   00009C   ........     CALLA   #strcpy
+     82              display_line[DISPLAY_L1][DISPLAY_CHAR9] =  arrived_state[0];
+   \   0000A0   D242........ MOV.B   &arrived_state, &display_line + 9
+     83              update_string(display_line[DISPLAY_L1], DISPLAY_L1);   
+   \   0000A6   0D43         MOV.W   #0x0, R13
+   \   0000A8   3C40....     MOV.W   #display_line, R12
+   \   0000AC   ........     CALLA   #update_string
+     84              strcpy(display_line[DISPLAY_L2], "  IP 10   ");
+   \   0000B0   3D40....     MOV.W   #`?<Constant "  IP 10   ">`, R13
+   \   0000B4   3C40....     MOV.W   #display_line + 11, R12
+   \   0000B8   ........     CALLA   #strcpy
+     85              update_string(display_line[DISPLAY_L2], DISPLAY_L2);
+   \   0000BC   1D43         MOV.W   #0x1, R13
+   \   0000BE   3C40....     MOV.W   #display_line + 11, R12
+   \   0000C2   ........     CALLA   #update_string
+     86              strcpy(display_line[DISPLAY_L3], "153.62.91 ");
+   \   0000C6   3D40....     MOV.W   #`?<Constant "153.62.91 ">`, R13
+   \   0000CA   3C40....     MOV.W   #display_line + 22, R12
+   \   0000CE   ........     CALLA   #strcpy
+     87              update_string(display_line[DISPLAY_L3], DISPLAY_L3);
+   \   0000D2   2D43         MOV.W   #0x2, R13
+   \   0000D4   3C40....     MOV.W   #display_line + 22, R12
+   \   0000D8   ........     CALLA   #update_string
+     88              strcpy(display_line[DISPLAY_L4], "SECS  ");
+   \   0000DC   3D40....     MOV.W   #`?<Constant "SECS  ">`, R13
+   \   0000E0   3C40....     MOV.W   #display_line + 33, R12
+   \   0000E4   ........     CALLA   #strcpy
+     89              update_string(display_line[DISPLAY_L4], DISPLAY_L4);  
+   \   0000E8   3D400300     MOV.W   #0x3, R13
+   \   0000EC   3C40....     MOV.W   #display_line + 33, R12
+   \   0000F0   ........     CALLA   #update_string
+     90              enable_display_update();
+   \   0000F4   ........     CALLA   #enable_display_update
+     91              display_changed = YES;
+   \   0000F8   D243....     MOV.B   #0x1, &display_changed
+     92              enable_circle_timer =1;
+   \   0000FC   9243....     MOV.W   #0x1, &enable_circle_timer
+   \   000100   1001         RETA
+     93            }else if (display_menu_state == STATE_2){     //state 2 is BLACK LINE
+   \                     ??display_menu_5:
+   \   000102   A293....     CMP.W   #0x2, &display_menu_state
+   \   000106   7B20         JNE     ??display_menu_4
+     94          
+     95              strcpy(display_line[DISPLAY_L1], "ARRIVED  ");
+   \   000108   3D40....     MOV.W   #`?<Constant "ARRIVED  ">`, R13
+   \   00010C   3C40....     MOV.W   #display_line, R12
+   \   000110   ........     CALLA   #strcpy
+     96              update_string(display_line[DISPLAY_L1], DISPLAY_L1);   
+   \   000114   0D43         MOV.W   #0x0, R13
+   \   000116   ........     CALLA   #update_string
+     97              strcpy(display_line[DISPLAY_L2], "  IP 10   ");
+   \   00011A   3D40....     MOV.W   #`?<Constant "  IP 10   ">`, R13
+   \   00011E   3C40....     MOV.W   #display_line + 11, R12
+   \   000122   ........     CALLA   #strcpy
+     98              update_string(display_line[DISPLAY_L2], DISPLAY_L2);
+   \   000126   1D43         MOV.W   #0x1, R13
+   \   000128   3C40....     MOV.W   #display_line + 11, R12
+   \   00012C   ........     CALLA   #update_string
+     99              strcpy(display_line[DISPLAY_L3], "153.62.91 ");
+   \   000130   3D40....     MOV.W   #`?<Constant "153.62.91 ">`, R13
+   \   000134   3C40....     MOV.W   #display_line + 22, R12
+   \   000138   ........     CALLA   #strcpy
+    100              update_string(display_line[DISPLAY_L3], DISPLAY_L3);
+   \   00013C   2D43         MOV.W   #0x2, R13
+   \   00013E   3C40....     MOV.W   #display_line + 22, R12
+   \   000142   ........     CALLA   #update_string
+    101              switch(line_state){
+   \   000146   1F42....     MOV.W   &line_state, R15
+   \   00014A   1F83         SUB.W   #0x1, R15
+   \   00014C   1024         JEQ     ??display_menu_6
+   \   00014E   1F83         SUB.W   #0x1, R15
+   \   000150   1524         JEQ     ??display_menu_7
+   \   000152   1F83         SUB.W   #0x1, R15
+   \   000154   1A24         JEQ     ??display_menu_8
+   \   000156   1F83         SUB.W   #0x1, R15
+   \   000158   1F24         JEQ     ??display_menu_9
+   \   00015A   1F83         SUB.W   #0x1, R15
+   \   00015C   2424         JEQ     ??display_menu_10
+   \   00015E   1F83         SUB.W   #0x1, R15
+   \   000160   2924         JEQ     ??display_menu_11
+   \   000162   1F83         SUB.W   #0x1, R15
+   \   000164   2E24         JEQ     ??display_menu_12
+   \   000166   3F800300     SUB.W   #0x3, R15
+   \   00016A   3224         JEQ     ??display_menu_13
+   \   00016C   383C         JMP     ??display_menu_0
+    102                case LINE_STATE_1:
+    103                  strcpy(display_line[DISPLAY_L4], " WAITING  ");
+   \                     ??display_menu_6:
+   \   00016E   3D40....     MOV.W   #`?<Constant " WAITING  ">`, R13
+   \   000172   3C40....     MOV.W   #display_line + 33, R12
+   \   000176   ........     CALLA   #strcpy
+    104                  break;
+   \   00017A   373C         JMP     ??display_menu_1
+    105                case LINE_STATE_2:
+    106                  strcpy(display_line[DISPLAY_L4], "INTERCEPT ");
+   \                     ??display_menu_7:
+   \   00017C   3D40....     MOV.W   #`?<Constant "INTERCEPT ">`, R13
+   \   000180   3C40....     MOV.W   #display_line + 33, R12
+   \   000184   ........     CALLA   #strcpy
+    107                  break;
+   \   000188   303C         JMP     ??display_menu_1
+    108                case LINE_STATE_3:
+    109                  strcpy(display_line[DISPLAY_L4], " WAITING  ");
+   \                     ??display_menu_8:
+   \   00018A   3D40....     MOV.W   #`?<Constant " WAITING  ">`, R13
+   \   00018E   3C40....     MOV.W   #display_line + 33, R12
+   \   000192   ........     CALLA   #strcpy
+    110                  break;
+   \   000196   293C         JMP     ??display_menu_1
+    111                case LINE_STATE_4:
+    112                  strcpy(display_line[DISPLAY_L4], " TURNING  ");
+   \                     ??display_menu_9:
+   \   000198   3D40....     MOV.W   #`?<Constant " TURNING  ">`, R13
+   \   00019C   3C40....     MOV.W   #display_line + 33, R12
+   \   0001A0   ........     CALLA   #strcpy
+    113                  break;
+   \   0001A4   223C         JMP     ??display_menu_1
+    114                case LINE_STATE_5:
+    115                  strcpy(display_line[DISPLAY_L4], " CIRCLING ");
+   \                     ??display_menu_10:
+   \   0001A6   3D40....     MOV.W   #`?<Constant " CIRCLING ">`, R13
+   \   0001AA   3C40....     MOV.W   #display_line + 33, R12
+   \   0001AE   ........     CALLA   #strcpy
+    116                  break;
+   \   0001B2   1B3C         JMP     ??display_menu_1
+    117                case LINE_STATE_6:
+    118                  strcpy(display_line[DISPLAY_L4], " TURNING  ");
+   \                     ??display_menu_11:
+   \   0001B4   3D40....     MOV.W   #`?<Constant " TURNING  ">`, R13
+   \   0001B8   3C40....     MOV.W   #display_line + 33, R12
+   \   0001BC   ........     CALLA   #strcpy
+    119                  break;
+   \   0001C0   143C         JMP     ??display_menu_1
+    120                case LINE_STATE_7:
+    121                  strcpy(display_line[DISPLAY_L4], "  CENTER  ");
+   \                     ??display_menu_12:
+   \   0001C2   3D40....     MOV.W   #`?<Constant "  CENTER  ">`, R13
+   \   0001C6   3C40....     MOV.W   #display_line + 33, R12
+   \   0001CA   ........     CALLA   #strcpy
+    122                  break;
+   \   0001CE   0D3C         JMP     ??display_menu_1
+    123                case LINE_STATE_10:
+    124                  strcpy(display_line[DISPLAY_L4], "   DONE   ");
+   \                     ??display_menu_13:
+   \   0001D0   3D40....     MOV.W   #`?<Constant "   DONE   ">`, R13
+   \   0001D4   3C40....     MOV.W   #display_line + 33, R12
+   \   0001D8   ........     CALLA   #strcpy
+    125                  break;
+   \   0001DC   063C         JMP     ??display_menu_1
+    126                  default: strcpy(display_line[DISPLAY_L4], "          "); break;
+   \                     ??display_menu_0:
+   \   0001DE   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   0001E2   3C40....     MOV.W   #display_line + 33, R12
+   \   0001E6   ........     CALLA   #strcpy
+    127               }
+    128              update_string(display_line[DISPLAY_L4], DISPLAY_L4);  
+   \                     ??display_menu_1:
+   \   0001EA   3D400300     MOV.W   #0x3, R13
+   \   0001EE   3C40....     MOV.W   #display_line + 33, R12
+   \   0001F2   ........     CALLA   #update_string
+    129              enable_display_update();
+   \   0001F6   ........     CALLA   #enable_display_update
+    130              display_changed = YES;
+   \   0001FA   D243....     MOV.B   #0x1, &display_changed
+    131            }
+    132          
+    133          //------------------------------------------------------------------------------
+    134          }
+   \                     ??display_menu_4:
+   \   0001FE   1001         RETA
+    135          
+
+   \                                 In  segment CODE, align 2
+    136          void display_line_copier(void){
+   \                     display_line_copier:
+    137          
+    138          
+    139            display_line[DISPLAY_L2][DISP_CHAR_0] = command_keeper[STR_CHAR_0];
+   \   000000   D242........ MOV.B   &command_keeper, &display_line + 11
+    140          display_line[DISPLAY_L2][DISP_CHAR_1] = command_keeper[STR_CHAR_1];
+   \   000006   D242........ MOV.B   &command_keeper + 1, &display_line + 12
+    141          display_line[DISPLAY_L2][DISP_CHAR_2] = command_keeper[STR_CHAR_2];
+   \   00000C   D242........ MOV.B   &command_keeper + 2, &display_line + 13
+    142          display_line[DISPLAY_L2][DISP_CHAR_3] = command_keeper[STR_CHAR_3];
+   \   000012   D242........ MOV.B   &command_keeper + 3, &display_line + 14
+    143          display_line[DISPLAY_L2][DISP_CHAR_4] = command_keeper[STR_CHAR_4];
+   \   000018   D242........ MOV.B   &command_keeper + 4, &display_line + 15
+    144          display_line[DISPLAY_L2][DISP_CHAR_5] = command_keeper[STR_CHAR_5];
+   \   00001E   D242........ MOV.B   &command_keeper + 5, &display_line + 16
+    145          display_line[DISPLAY_L2][DISP_CHAR_6] = command_keeper[STR_CHAR_6];
+   \   000024   D242........ MOV.B   &command_keeper + 6, &display_line + 17
+    146          display_line[DISPLAY_L2][DISP_CHAR_7] = command_keeper[STR_CHAR_7];
+   \   00002A   D242........ MOV.B   &command_keeper + 7, &display_line + 18
+    147          display_line[DISPLAY_L2][DISP_CHAR_8] = command_keeper[STR_CHAR_8];
+   \   000030   D242........ MOV.B   &command_keeper + 8, &display_line + 19
+    148          display_line[DISPLAY_L2][DISP_CHAR_9] = command_keeper[STR_CHAR_9];
+   \   000036   D242........ MOV.B   &command_keeper + 9, &display_line + 20
+    149          
+    150          // if(display_keeper[STR_CHAR_0] != ' '){
+    151          //    message_keeper[STR_CHAR_0]=display_keeper[STR_CHAR_0];
+    152          //    message_keeper[STR_CHAR_1]=display_keeper[STR_CHAR_1];
+    153          //    message_keeper[STR_CHAR_2]=display_keeper[STR_CHAR_2];
+    154          //    message_keeper[STR_CHAR_3]=display_keeper[STR_CHAR_3];
+    155          //    message_keeper[STR_CHAR_4]=display_keeper[STR_CHAR_4];
+    156          //    message_keeper[STR_CHAR_5]=display_keeper[STR_CHAR_5];
+    157          //    message_keeper[STR_CHAR_6]=display_keeper[STR_CHAR_6];
+    158          //    message_keeper[STR_CHAR_7]=display_keeper[STR_CHAR_7];
+    159          //    message_keeper[STR_CHAR_8]=display_keeper[STR_CHAR_8];
+    160          //    message_keeper[STR_CHAR_9]='\0';
+    161          //   // store_once =0;
+    162          //  }
+    163            
+    164          }
+   \   00003C   1001         RETA
+    165          
+
+   \                                 In  segment CODE, align 2
+    166          void display_line_clear(void){
+   \                     display_line_clear:
+    167          
+    168          //  int j;
+    169          //  for(j=0;display_keeper[j] != '\r';j++){
+    170          //        command_keeper[j]=display_keeper[j];
+    171          //    } else{
+    172          //    display_keeper[j]=display_keeper[j];
+    173          //    }
+    174            }
+   \   000000   1001         RETA
+    175          
+    176          
+    177          
+
+   \                                 In  segment CODE, align 2
+    178          void display_putty_state(void){
+   \                     display_putty_state:
+    179          
+    180            switch(display_putty) {
+   \   000000   1F42....     MOV.W   &display_putty, R15
+   \   000004   1F83         SUB.W   #0x1, R15
+   \   000006   0324         JEQ     ??display_putty_state_1
+   \   000008   1F83         SUB.W   #0x1, R15
+   \   00000A   1724         JEQ     ??display_putty_state_2
+   \   00000C   1001         RETA
+    181             case 1  : //UCA1TXBUF = '\n';
+    182                    
+    183                     strcpy( message_keeper, "I'm here ");
+   \                     ??display_putty_state_1:
+   \   00000E   3D40....     MOV.W   #`?<Constant "I\\'m here ">`, R13
+   \   000012   3C40....     MOV.W   #message_keeper, R12
+   \   000016   ........     CALLA   #strcpy
+    184                     strcpy(display_line[DISPLAY_L3], "I'm here  ");
+   \   00001A   3D40....     MOV.W   #`?<Constant "I\\'m here  ">`, R13
+   \   00001E   3C40....     MOV.W   #display_line + 22, R12
+   \   000022   ........     CALLA   #strcpy
+    185                     update_string(display_line[DISPLAY_L3], DISPLAY_L3);
+   \   000026   2D43         MOV.W   #0x2, R13
+   \   000028   3C40....     MOV.W   #display_line + 22, R12
+   \   00002C   ........     CALLA   #update_string
+    186                    UCA1_index=0;
+   \   000030   8243....     MOV.W   #0x0, &UCA1_index
+    187                    //UCA1IE |= UCTXIE;
+    188                    //UCA1TXBUF = message_keeper[0];
+    189                           display_putty=0;
+   \   000034   8243....     MOV.W   #0x0, &display_putty
+    190          
+    191          
+    192                break; 
+   \   000038   1001         RETA
+    193             case 2  : // UCA1TXBUF = '\n';
+    194                    strcpy( message_keeper, "115,200  ");
+   \                     ??display_putty_state_2:
+   \   00003A   3D40....     MOV.W   #`?<Constant "115,200  ">`, R13
+   \   00003E   3C40....     MOV.W   #message_keeper, R12
+   \   000042   ........     CALLA   #strcpy
+    195                    strcpy(display_line[DISPLAY_L3], "115,200   ");
+   \   000046   3D40....     MOV.W   #`?<Constant "115,200   ">`, R13
+   \   00004A   3C40....     MOV.W   #display_line + 22, R12
+   \   00004E   ........     CALLA   #strcpy
+    196                    update_string(display_line[DISPLAY_L3], DISPLAY_L3);
+   \   000052   2D43         MOV.W   #0x2, R13
+   \   000054   3C40....     MOV.W   #display_line + 22, R12
+   \   000058   ........     CALLA   #update_string
+    197                    //UCA1IE |= UCTXIE;
+    198                    UCA1_index=0;
+   \   00005C   8243....     MOV.W   #0x0, &UCA1_index
+    199                   // UCA1IE |= UCTXIE;
+    200                    //UCA1TXBUF = message_keeper[0];
+    201                    display_putty=0;      
+   \   000060   8243....     MOV.W   #0x0, &display_putty
+    202          
+    203                break; 
+    204            
+    205             /* you can have any number of case statements */
+    206             default : break;
+    207            }
+    208          
+    209          
+    210          
+    211          }
+   \   000064   1001         RETA
+    212          
+
+   \                                 In  segment CODE, align 2
+    213          void command_array_clear(void){
+   \                     command_array_clear:
+    214          int j;
+    215          for(j=0;j<10;j++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??command_array_clear_0:
+   \   000002   3F900A00     CMP.W   #0xa, R15
+   \   000006   0534         JGE     ??command_array_clear_1
+    216            command_keeper[j]=' ';
+   \   000008   FF402000.... MOV.B   #0x20, command_keeper(R15)
+    217          
+    218          }
+   \   00000E   1F53         ADD.W   #0x1, R15
+   \   000010   F83F         JMP     ??command_array_clear_0
+    219           command_keeper[10]='\n';
+   \                     ??command_array_clear_1:
+   \   000012   F2400A00.... MOV.B   #0xa, &command_keeper + 10
+    220          }
+   \   000018   1001         RETA
+    221          
+
+   \                                 In  segment CODE, align 2
+    222          void command_array_copier(void){
+   \                     command_array_copier:
+    223          int j;
+    224            for(j=0;display_keeper[j] != '\r';j++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??command_array_copier_0:
+   \   000002   FF900D00.... CMP.B   #0xd, display_keeper(R15)
+   \   000008   0524         JEQ     ??command_array_copier_1
+    225                  command_keeper[j]=display_keeper[j];
+   \   00000A   DF4F........ MOV.B   display_keeper(R15), command_keeper(R15)
+    226          
+    227            }
+   \   000010   1F53         ADD.W   #0x1, R15
+   \   000012   F73F         JMP     ??command_array_copier_0
+    228                 check_command_once = 1;
+   \                     ??command_array_copier_1:
+   \   000014   9243....     MOV.W   #0x1, &check_command_once
+    229          }
+   \   000018   1001         RETA
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   NCSU   ">`:
+   \   000000   2020204E4353 DC8 "   NCSU   "
+   \            5520202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   WOLF   ">`:
+   \   000000   202020574F4C DC8 "   WOLF   "
+   \            4620202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " PROJECT  ">`:
+   \   000000   2050524F4A45 DC8 " PROJECT  "
+   \            4354202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "    10    ">`:
+   \   000000   202020203130 DC8 "    10    "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "ARRIVED  ">`:
+   \   000000   415252495645 DC8 "ARRIVED  "
+   \            44202000    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  IP 10   ">`:
+   \   000000   202049502031 DC8 "  IP 10   "
+   \            3020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "153.62.91 ">`:
+   \   000000   3135332E3632 DC8 "153.62.91 "
+   \            2E39312000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "SECS  ">`:
+   \   000000   534543532020 DC8 "SECS  "
+   \            00          
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " WAITING  ">`:
+   \   000000   205741495449 DC8 " WAITING  "
+   \            4E47202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "INTERCEPT ">`:
+   \   000000   494E54455243 DC8 "INTERCEPT "
+   \            4550542000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " TURNING  ">`:
+   \   000000   205455524E49 DC8 " TURNING  "
+   \            4E47202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " CIRCLING ">`:
+   \   000000   20434952434C DC8 " CIRCLING "
+   \            494E472000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  CENTER  ">`:
+   \   000000   202043454E54 DC8 "  CENTER  "
+   \            4552202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   DONE   ">`:
+   \   000000   202020444F4E DC8 "   DONE   "
+   \            4520202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "          ">`:
+   \   000000   202020202020 DC8 "          "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "I\\'m here ">`:
+   \   000000   49276D206865 DC8 "I'm here "
+   \            72652000    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "I\\'m here  ">`:
+   \   000000   49276D206865 DC8 "I'm here  "
+   \            7265202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "115,200  ">`:
+   \   000000   3131352C3230 DC8 "115,200  "
+   \            30202000    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "115,200   ">`:
+   \   000000   3131352C3230 DC8 "115,200   "
+   \            3020202000  
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   command_array_clear
+      4   command_array_copier
+      4   display_line_clear
+      4   display_line_copier
+      4   display_menu
+        4   -> enable_display_update
+        4   -> strcpy
+        4   -> update_string
+      4   display_putty_state
+        4   -> strcpy
+        4   -> update_string
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      11  ?<Constant "          ">
+      11  ?<Constant "    10    ">
+      11  ?<Constant "   DONE   ">
+      11  ?<Constant "   NCSU   ">
+      11  ?<Constant "   WOLF   ">
+      11  ?<Constant "  CENTER  ">
+      11  ?<Constant "  IP 10   ">
+      11  ?<Constant " CIRCLING ">
+      11  ?<Constant " PROJECT  ">
+      11  ?<Constant " TURNING  ">
+      11  ?<Constant " WAITING  ">
+      11  ?<Constant "115,200   ">
+      10  ?<Constant "115,200  ">
+      11  ?<Constant "153.62.91 ">
+      10  ?<Constant "ARRIVED  ">
+      11  ?<Constant "INTERCEPT ">
+      11  ?<Constant "I\'m here  ">
+      10  ?<Constant "I\'m here ">
+       7  ?<Constant "SECS  ">
+       2  arrived_state
+       2  arrived_state_int
+      26  command_array_clear
+      26  command_array_copier
+       2  display_counter
+       2  display_line_clear
+      62  display_line_copier
+     512  display_menu
+       2  display_menu_state
+     102  display_putty_state
+       2  figure
+       2  once
+
+ 
+ 730 bytes in segment CODE
+ 202 bytes in segment DATA16_C
+  12 bytes in segment DATA16_Z
+ 
+ 730 bytes of CODE  memory
+ 202 bytes of CONST memory
+  12 bytes of DATA  memory
+
+Errors: none
+Warnings: none

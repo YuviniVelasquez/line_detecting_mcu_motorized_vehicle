@@ -1,0 +1,579 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.3.989/W32 for MSP430           04/Dec/2019  20:45:38
+# Copyright 1996-2019 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10 - Copy
+#        (6)\general_fuctions.c
+#    Command line  =  
+#        -f C:\Users\DRVELA~1\AppData\Local\Temp\EWABC5.tmp ("C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10 - Copy
+#        (6)\general_fuctions.c" -lC "C:\Users\Dr
+#        Velasquez\Desktop\306\306_code\Project 10 - Copy (6)\Debug\List" -o
+#        "C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10 - Copy
+#        (6)\Debug\Obj" --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --debug -D__MSP430FR2355__ -e --double=32 --dlib_config
+#        "C:\Program Files\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" -I ./\ --core=430X --data_model=small
+#        -On --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10 - Copy
+#        (6)\Debug\List\general_fuctions.lst
+#    Object file   =  
+#        C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10 - Copy
+#        (6)\Debug\Obj\general_fuctions.r43
+#
+###############################################################################
+
+C:\Users\Dr Velasquez\Desktop\306\306_code\Project 10 - Copy (6)\general_fuctions.c
+      1          //===========================================================================
+      2          // File Name : general_functions.c
+      3          //
+      4          // Description: This file contains a variety of functions that help initialize IOT 
+      5          //
+      6          // Author: Yuvini Velasquez
+      7          // Date: 9/11/19
+      8          // Compiler: Built with IAR Embedded Workbench Version: V (7.12.4)
+      9          //===========================================================================
+     10          
+     11          #include  "functions.h"
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x50e
+   \   union <unnamed> _A_UCA0TXBUF_L
+   \                     _A_UCA0TXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x51a
+   \   union <unnamed> _A_UCA0IE_L
+   \                     _A_UCA0IE_L:
+   \   000000                DS8 2
+     13          #include <string.h>
+     14          #include "macros.h"
+     15          extern volatile unsigned int enable_setup_commands;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     16          volatile unsigned int enable_iot_port_number;
+   \                     enable_iot_port_number:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     17          char iot_commands [STRING_SIZE_30];
+   \                     iot_commands:
+   \   000000                DS8 30
+     18          extern volatile unsigned int UCA0_index;
+     19          extern volatile unsigned int UCA1_index;
+     20          extern volatile char command_viewer [STRING_SIZE_30];
+     21          extern volatile unsigned int clear_iot_command;
+     22          extern volatile char command_stack[STACK_SIZE][STRING_SIZE_30];
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     23          volatile unsigned int command_library1;
+   \                     command_library1:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          volatile unsigned int command_library2;
+   \                     command_library2:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     25          volatile unsigned int command_library3;
+   \                     command_library3:
+   \   000000                DS8 2
+     26          extern volatile unsigned int ready_to_read_stack;
+     27          extern unsigned int stack_row;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     28          volatile unsigned int command_library_state;
+   \                     command_library_state:
+   \   000000                DS8 2
+     29          extern volatile unsigned int command_call;
+     30          
+     31          
+
+   \                                 In  segment CODE, align 2
+     32          void dissasemby_setup(void){
+   \                     dissasemby_setup:
+     33            if (enable_setup_commands == YES){
+   \   000000   9293....     CMP.W   #0x1, &enable_setup_commands
+   \   000004   1820         JNE     ??dissasemby_setup_0
+     34              enable_setup_commands = NO_2;
+   \   000006   A243....     MOV.W   #0x2, &enable_setup_commands
+     35              strcpy(iot_commands," AT+WSYNCINTRL=60000");
+   \   00000A   3D40....     MOV.W   #`?<Constant " AT+WSYNCINTRL=60000">`, R13
+   \   00000E   3C40....     MOV.W   #iot_commands, R12
+   \   000012   ........     CALLA   #strcpy
+     36              iot_commands[DISSASEMBLY_RETURN]= '\r';
+   \   000016   F2400D00.... MOV.B   #0xd, &iot_commands + 20
+     37              UCA0_index = RESET_INDEX;
+   \   00001C   8243....     MOV.W   #0x0, &UCA0_index
+     38              UCA0IE |= UCTXIE; // Enable TX interrupt
+   \   000020   A2D31A05     BIS.W   #0x2, &0x51a
+     39              UCA0TXBUF= iot_commands[UCA0_index];
+   \   000024   1F42....     MOV.W   &UCA0_index, R15
+   \   000028   5F4F....     MOV.B   iot_commands(R15), R15
+   \   00002C   4F4F         MOV.B   R15, R15
+   \   00002E   824F0E05     MOV.W   R15, &0x50e
+     40              //command_viewer[UCA0_index] = iot_commands[UCA0_index];
+     41              enable_iot_port_number = YES;
+   \   000032   9243....     MOV.W   #0x1, &enable_iot_port_number
+     42            }
+     43          }
+   \                     ??dissasemby_setup_0:
+   \   000036   1001         RETA
+   \   000038                REQUIRE _A_UCA0IE_L
+   \   000038                REQUIRE _A_UCA0TXBUF_L
+     44          
+
+   \                                 In  segment CODE, align 2
+     45          void iot_port_setup(void){
+   \                     iot_port_setup:
+     46            if (enable_iot_port_number == YES){
+   \   000000   9293....     CMP.W   #0x1, &enable_iot_port_number
+   \   000004   1620         JNE     ??iot_port_setup_0
+     47              enable_iot_port_number = NO_2;
+   \   000006   A243....     MOV.W   #0x2, &enable_iot_port_number
+     48              strcpy(iot_commands,"AT+NSTCP=34765,1");
+   \   00000A   3D40....     MOV.W   #`?<Constant "AT+NSTCP=34765,1">`, R13
+   \   00000E   3C40....     MOV.W   #iot_commands, R12
+   \   000012   ........     CALLA   #strcpy
+     49              iot_commands[IOT_RETURN]= '\r';
+   \   000016   F2400D00.... MOV.B   #0xd, &iot_commands + 16
+     50              UCA0_index = RESET_INDEX;
+   \   00001C   8243....     MOV.W   #0x0, &UCA0_index
+     51              UCA0IE |= UCTXIE; // Enable TX interrupt
+   \   000020   A2D31A05     BIS.W   #0x2, &0x51a
+     52              UCA0TXBUF= iot_commands[UCA0_index];
+   \   000024   1F42....     MOV.W   &UCA0_index, R15
+   \   000028   5F4F....     MOV.B   iot_commands(R15), R15
+   \   00002C   4F4F         MOV.B   R15, R15
+   \   00002E   824F0E05     MOV.W   R15, &0x50e
+     53          
+     54            }
+     55          }
+   \                     ??iot_port_setup_0:
+   \   000032   1001         RETA
+   \   000034                REQUIRE _A_UCA0IE_L
+   \   000034                REQUIRE _A_UCA0TXBUF_L
+     56          
+
+   \                                 In  segment CODE, align 2
+     57          void clear_iot_command_array(void){
+   \                     clear_iot_command_array:
+     58            if (clear_iot_command == YES){
+   \   000000   9293....     CMP.W   #0x1, &clear_iot_command
+   \   000004   0E20         JNE     ??clear_iot_command_array_0
+     59              clear_iot_command = NO;
+   \   000006   8243....     MOV.W   #0x0, &clear_iot_command
+     60              strcpy(iot_commands,"                            ");
+   \   00000A   3D40....     MOV.W   #`?<Constant "                     ...">`, R13
+   \   00000E   3C40....     MOV.W   #iot_commands, R12
+   \   000012   ........     CALLA   #strcpy
+     61              iot_commands[RETURN_COM_LOCATION]= '\r';
+   \   000016   F2400D00.... MOV.B   #0xd, &iot_commands + 28
+     62              iot_commands[NULL_COM_LOCATION]= '\n';
+   \   00001C   F2400A00.... MOV.B   #0xa, &iot_commands + 29
+     63            }
+     64          }
+   \                     ??clear_iot_command_array_0:
+   \   000022   1001         RETA
+
+   \                                 In  segment CODE, align 2
+     65          void clear_stack(void){
+   \                     clear_stack:
+     66            int m;
+     67            int n;
+     68            for(m= FIRST_COMMAND; m <=  THIRD_COMMAND; m++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??clear_stack_1:
+   \   000002   3F900300     CMP.W   #0x3, R15
+   \   000006   3534         JGE     ??clear_stack_3
+     69              for(n=BEG_COMMAND_CHAR;n<= LAST_COMMAND_CHAR; n++){
+   \   000008   0E43         MOV.W   #0x0, R14
+   \                     ??clear_stack_0:
+   \   00000A   3E901E00     CMP.W   #0x1e, R14
+   \   00000E   2F34         JGE     ??clear_stack_4
+     70                  command_stack[m][n] = '\0';
+   \   000010   0D4F         MOV.W   R15, R13
+   \   000012   0D5D         RLA.W   R13
+   \   000014   0C4D         MOV.W   R13, R12
+   \   000016   0D5D         RLA.W   R13
+   \   000018   0C5D         ADD.W   R13, R12
+   \   00001A   0D5D         RLA.W   R13
+   \   00001C   0C5D         ADD.W   R13, R12
+   \   00001E   0D5D         RLA.W   R13
+   \   000020   0D5C         ADD.W   R12, R13
+   \   000022   0D5E         ADD.W   R14, R13
+   \   000024   CD43....     MOV.B   #0x0, command_stack(R13)
+     71                  if(n == RETURN_COM_LOCATION){
+   \   000028   3E901C00     CMP.W   #0x1c, R14
+   \   00002C   0E20         JNE     ??clear_stack_5
+     72                    command_stack[m][n] = '\r';
+   \   00002E   0D4F         MOV.W   R15, R13
+   \   000030   0D5D         RLA.W   R13
+   \   000032   0C4D         MOV.W   R13, R12
+   \   000034   0D5D         RLA.W   R13
+   \   000036   0C5D         ADD.W   R13, R12
+   \   000038   0D5D         RLA.W   R13
+   \   00003A   0C5D         ADD.W   R13, R12
+   \   00003C   0D5D         RLA.W   R13
+   \   00003E   0D5C         ADD.W   R12, R13
+   \   000040   0D5E         ADD.W   R14, R13
+   \   000042   FD400D00.... MOV.B   #0xd, command_stack(R13)
+   \   000048   103C         JMP     ??clear_stack_2
+     73                  }else if (n == NULL_COM_LOCATION){
+   \                     ??clear_stack_5:
+   \   00004A   3E901D00     CMP.W   #0x1d, R14
+   \   00004E   0D20         JNE     ??clear_stack_2
+     74                    command_stack[m][n] = '\n';
+   \   000050   0D4F         MOV.W   R15, R13
+   \   000052   0D5D         RLA.W   R13
+   \   000054   0C4D         MOV.W   R13, R12
+   \   000056   0D5D         RLA.W   R13
+   \   000058   0C5D         ADD.W   R13, R12
+   \   00005A   0D5D         RLA.W   R13
+   \   00005C   0C5D         ADD.W   R13, R12
+   \   00005E   0D5D         RLA.W   R13
+   \   000060   0D5C         ADD.W   R12, R13
+   \   000062   0D5E         ADD.W   R14, R13
+   \   000064   FD400A00.... MOV.B   #0xa, command_stack(R13)
+     75                  }
+     76              } 
+   \                     ??clear_stack_2:
+   \   00006A   1E53         ADD.W   #0x1, R14
+   \   00006C   CE3F         JMP     ??clear_stack_0
+     77            }
+   \                     ??clear_stack_4:
+   \   00006E   1F53         ADD.W   #0x1, R15
+   \   000070   C83F         JMP     ??clear_stack_1
+     78          }
+   \                     ??clear_stack_3:
+   \   000072   1001         RETA
+     79          
+
+   \                                 In  segment CODE, align 2
+     80          void command_stack_process(void){
+   \                     command_stack_process:
+     81          
+     82            if(ready_to_read_stack == YES){
+   \   000000   9293....     CMP.W   #0x1, &ready_to_read_stack
+   \   000004   1D20         JNE     ??command_stack_process_0
+     83              if(stack_row > AT_LEAST_1_COMMAND){
+   \   000006   8293....     CMP.W   #0x0, &stack_row
+   \   00000A   0524         JEQ     ??command_stack_process_1
+     84              command_library1 = command_stack[FIRST_COMMAND][FIRST_COMMAND_CHAR];
+   \   00000C   5F42....     MOV.B   &command_stack + 1, R15
+   \   000010   4F4F         MOV.B   R15, R15
+   \   000012   824F....     MOV.W   R15, &command_library1
+     85              }
+     86              if (stack_row >AT_LEAST_2_COMMAND){
+   \                     ??command_stack_process_1:
+   \   000016   A293....     CMP.W   #0x2, &stack_row
+   \   00001A   0528         JNC     ??command_stack_process_2
+     87                  command_library2 = command_stack[SECOND_COMMAND][SECOND_COMMAND_CHAR];
+   \   00001C   5F42....     MOV.B   &command_stack + 31, R15
+   \   000020   4F4F         MOV.B   R15, R15
+   \   000022   824F....     MOV.W   R15, &command_library2
+     88              }
+     89              if(stack_row >AT_LEAST_3_COMMAND){
+   \                     ??command_stack_process_2:
+   \   000026   B2900300.... CMP.W   #0x3, &stack_row
+   \   00002C   0528         JNC     ??command_stack_process_3
+     90                  command_library3 = command_stack[THIRD_COMMAND][THIRD_COMMAND_CHAR];
+   \   00002E   5F42....     MOV.B   &command_stack + 61, R15
+   \   000032   4F4F         MOV.B   R15, R15
+   \   000034   824F....     MOV.W   R15, &command_library3
+     91              }
+     92             ready_to_read_stack=NO;
+   \                     ??command_stack_process_3:
+   \   000038   8243....     MOV.W   #0x0, &ready_to_read_stack
+     93            command_library_state = CASE_1; 
+   \   00003C   9243....     MOV.W   #0x1, &command_library_state
+     94            }
+     95          
+     96            
+     97          }
+   \                     ??command_stack_process_0:
+   \   000040   1001         RETA
+     98          
+     99          //F forward 2 secs
+    100          //B backward 1 sec
+    101          //R right 90 degrees
+    102          //L left 45 degrees
+    103          
+
+   \                                 In  segment CODE, align 2
+    104           void command_library (void){
+   \                     command_library:
+    105              switch(command_library_state){
+   \   000000   1F42....     MOV.W   &command_library_state, R15
+   \   000004   0F83         SUB.W   #0x0, R15
+   \   000006   B824         JEQ     ??command_library_9
+   \   000008   1F83         SUB.W   #0x1, R15
+   \   00000A   0924         JEQ     ??command_library_10
+   \   00000C   1F83         SUB.W   #0x1, R15
+   \   00000E   B424         JEQ     ??command_library_9
+   \   000010   1F83         SUB.W   #0x1, R15
+   \   000012   5F24         JEQ     ??command_library_11
+   \   000014   1F83         SUB.W   #0x1, R15
+   \   000016   B024         JEQ     ??command_library_9
+   \   000018   1F83         SUB.W   #0x1, R15
+   \   00001A   8324         JEQ     ??command_library_12
+   \   00001C   1001         RETA
+    106                
+    107                case CASE_0:    
+    108                  break;
+    109                case CASE_1:                  
+    110                    if(command_library1 == FORWARD_2_SECS ){
+   \                     ??command_library_10:
+   \   00001E   B2904100.... CMP.W   #0x41, &command_library1
+   \   000024   0620         JNE     ??command_library_13
+    111                      command_call = FORWARD_2_SECS; command_library_state = CASE_2;
+   \   000026   B2404100.... MOV.W   #0x41, &command_call
+   \   00002C   A243....     MOV.W   #0x2, &command_library_state
+   \   000030   1001         RETA
+    112                    }else if(command_library1 == BACK_1_SEC ){
+   \                     ??command_library_13:
+   \   000032   B2904200.... CMP.W   #0x42, &command_library1
+   \   000038   0620         JNE     ??command_library_14
+    113                      command_call = BACK_1_SEC; command_library_state = CASE_2;
+   \   00003A   B2404200.... MOV.W   #0x42, &command_call
+   \   000040   A243....     MOV.W   #0x2, &command_library_state
+   \   000044   1001         RETA
+    114                    }else if(command_library1 == RIGHT_45_DEGREES ){
+   \                     ??command_library_14:
+   \   000046   B2904300.... CMP.W   #0x43, &command_library1
+   \   00004C   0620         JNE     ??command_library_15
+    115                      command_call = RIGHT_45_DEGREES; command_library_state = CASE_2;
+   \   00004E   B2404300.... MOV.W   #0x43, &command_call
+   \   000054   A243....     MOV.W   #0x2, &command_library_state
+   \   000058   1001         RETA
+    116                    }else if(command_library1 == LEFT_45_DEGREES ){
+   \                     ??command_library_15:
+   \   00005A   B2904400.... CMP.W   #0x44, &command_library1
+   \   000060   0620         JNE     ??command_library_16
+    117                      command_call = LEFT_45_DEGREES;  command_library_state = CASE_2;
+   \   000062   B2404400.... MOV.W   #0x44, &command_call
+   \   000068   A243....     MOV.W   #0x2, &command_library_state
+   \   00006C   1001         RETA
+    118                    }else if(command_library1 == RIGHT_10_DEGREES ){
+   \                     ??command_library_16:
+   \   00006E   B2904700.... CMP.W   #0x47, &command_library1
+   \   000074   0620         JNE     ??command_library_17
+    119                      command_call = RIGHT_10_DEGREES;  command_library_state = CASE_2;
+   \   000076   B2404700.... MOV.W   #0x47, &command_call
+   \   00007C   A243....     MOV.W   #0x2, &command_library_state
+   \   000080   1001         RETA
+    120                    }else if(command_library1 == LEFT_10_DEGREES ){
+   \                     ??command_library_17:
+   \   000082   B2904800.... CMP.W   #0x48, &command_library1
+   \   000088   0620         JNE     ??command_library_18
+    121                      command_call = LEFT_10_DEGREES;  command_library_state = CASE_2;
+   \   00008A   B2404800.... MOV.W   #0x48, &command_call
+   \   000090   A243....     MOV.W   #0x2, &command_library_state
+   \   000094   1001         RETA
+    122                    }else if(command_library1 == FORWARD_5_SECS ){
+   \                     ??command_library_18:
+   \   000096   B2904900.... CMP.W   #0x49, &command_library1
+   \   00009C   0620         JNE     ??command_library_19
+    123                      command_call = FORWARD_5_SECS;  command_library_state = CASE_2;
+   \   00009E   B2404900.... MOV.W   #0x49, &command_call
+   \   0000A4   A243....     MOV.W   #0x2, &command_library_state
+   \   0000A8   1001         RETA
+    124                    }else if(command_library1 == RIGHT_180_D ){
+   \                     ??command_library_19:
+   \   0000AA   B2904A00.... CMP.W   #0x4a, &command_library1
+   \   0000B0   0620         JNE     ??command_library_20
+    125                      command_call = RIGHT_180_D;  command_library_state = CASE_2;
+   \   0000B2   B2404A00.... MOV.W   #0x4a, &command_call
+   \   0000B8   A243....     MOV.W   #0x2, &command_library_state
+   \   0000BC   1001         RETA
+    126                    }else if(command_library1 == CHANGE_ARRIVED_STATE ){
+   \                     ??command_library_20:
+   \   0000BE   B2904B00.... CMP.W   #0x4b, &command_library1
+   \   0000C4   5920         JNE     ??command_library_9
+    127                      command_call = CHANGE_ARRIVED_STATE;  command_library_state = CASE_2;
+   \   0000C6   B2404B00.... MOV.W   #0x4b, &command_call
+   \   0000CC   A243....     MOV.W   #0x2, &command_library_state
+    128                    }else{ break; }
+    129                  break;
+   \   0000D0   1001         RETA
+    130                case CASE_2:
+    131                  break;
+    132                case CASE_3:
+    133                    if(command_library2 == FORWARD_2_SECS ){
+   \                     ??command_library_11:
+   \   0000D2   B2904100.... CMP.W   #0x41, &command_library2
+   \   0000D8   0620         JNE     ??command_library_21
+    134                      command_call = FORWARD_2_SECS; command_library_state = CASE_4;
+   \   0000DA   B2404100.... MOV.W   #0x41, &command_call
+   \   0000E0   A242....     MOV.W   #0x4, &command_library_state
+   \   0000E4   1001         RETA
+    135                    }else if(command_library2 == BACK_1_SEC ){
+   \                     ??command_library_21:
+   \   0000E6   B2904200.... CMP.W   #0x42, &command_library2
+   \   0000EC   0620         JNE     ??command_library_22
+    136                      command_call = BACK_1_SEC; command_library_state = CASE_4;
+   \   0000EE   B2404200.... MOV.W   #0x42, &command_call
+   \   0000F4   A242....     MOV.W   #0x4, &command_library_state
+   \   0000F8   1001         RETA
+    137                    }else if(command_library2 == RIGHT_45_DEGREES ){
+   \                     ??command_library_22:
+   \   0000FA   B2904300.... CMP.W   #0x43, &command_library2
+   \   000100   0620         JNE     ??command_library_23
+    138                      command_call = RIGHT_45_DEGREES; command_library_state = CASE_4;
+   \   000102   B2404300.... MOV.W   #0x43, &command_call
+   \   000108   A242....     MOV.W   #0x4, &command_library_state
+   \   00010C   1001         RETA
+    139                    }else if(command_library2 == LEFT_45_DEGREES ){
+   \                     ??command_library_23:
+   \   00010E   B2904400.... CMP.W   #0x44, &command_library2
+   \   000114   3120         JNE     ??command_library_9
+    140                      command_call = LEFT_45_DEGREES; command_library_state = CASE_4;
+   \   000116   B2404400.... MOV.W   #0x44, &command_call
+   \   00011C   A242....     MOV.W   #0x4, &command_library_state
+    141                    }else break; 
+    142                  break;
+   \   000120   1001         RETA
+    143                case CASE_4:
+    144                  break;
+    145                case CASE_5:
+    146                    if(command_library3 == FORWARD_2_SECS ){
+   \                     ??command_library_12:
+   \   000122   B2904100.... CMP.W   #0x41, &command_library3
+   \   000128   0720         JNE     ??command_library_24
+    147                      command_call = FORWARD_2_SECS; command_library_state = CASE_6;
+   \   00012A   B2404100.... MOV.W   #0x41, &command_call
+   \   000130   B2400600.... MOV.W   #0x6, &command_library_state
+   \   000136   1001         RETA
+    148                    }else if(command_library3 == BACK_1_SEC ){
+   \                     ??command_library_24:
+   \   000138   B2904200.... CMP.W   #0x42, &command_library3
+   \   00013E   0720         JNE     ??command_library_25
+    149                      command_call = BACK_1_SEC; command_library_state = CASE_6;
+   \   000140   B2404200.... MOV.W   #0x42, &command_call
+   \   000146   B2400600.... MOV.W   #0x6, &command_library_state
+   \   00014C   1001         RETA
+    150                    }else if(command_library3 == RIGHT_45_DEGREES ){
+   \                     ??command_library_25:
+   \   00014E   B2904300.... CMP.W   #0x43, &command_library3
+   \   000154   0720         JNE     ??command_library_26
+    151                      command_call = RIGHT_45_DEGREES; command_library_state = CASE_6;
+   \   000156   B2404300.... MOV.W   #0x43, &command_call
+   \   00015C   B2400600.... MOV.W   #0x6, &command_library_state
+   \   000162   1001         RETA
+    152                    }else if(command_library3 == LEFT_45_DEGREES ){
+   \                     ??command_library_26:
+   \   000164   B2904400.... CMP.W   #0x44, &command_library3
+   \   00016A   0620         JNE     ??command_library_9
+    153                      command_call = LEFT_45_DEGREES; command_library_state = CASE_6;
+   \   00016C   B2404400.... MOV.W   #0x44, &command_call
+   \   000172   B2400600.... MOV.W   #0x6, &command_library_state
+    154                    }else break; 
+    155                  break;                        //
+    156                default: break;
+    157                }
+    158            
+    159            
+    160          }
+   \                     ??command_library_9:
+   \   000178   1001         RETA
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " AT+WSYNCINTRL=60000">`:
+   \   000000   2041542B5753 DC8 " AT+WSYNCINTRL=60000"
+   \            594E43494E54
+   \            524C3D363030
+   \            303000      
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+NSTCP=34765,1">`:
+   \   000000   41542B4E5354 DC8 "AT+NSTCP=34765,1"
+   \            43503D333437
+   \            36352C3100  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "                     ...">`:
+   \   000000   202020202020 DC8 "                            "
+   \            202020202020
+   \            202020202020
+   \            202020202020
+   \            2020202000  
+    161           
+    162          
+    163          
+    164          
+    165          
+    166          
+    167          
+    168          
+    169          
+    170          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   clear_iot_command_array
+        4   -> strcpy
+      4   clear_stack
+      4   command_library
+      4   command_stack_process
+      4   dissasemby_setup
+        4   -> strcpy
+      4   iot_port_setup
+        4   -> strcpy
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      29  ?<Constant "                     ...">
+      21  ?<Constant " AT+WSYNCINTRL=60000">
+      17  ?<Constant "AT+NSTCP=34765,1">
+       2  _A_UCA0IE_L
+       2  _A_UCA0TXBUF_L
+      36  clear_iot_command_array
+     116  clear_stack
+     378  command_library
+       2  command_library1
+       2  command_library2
+       2  command_library3
+       2  command_library_state
+      66  command_stack_process
+      56  dissasemby_setup
+       2  enable_iot_port_number
+      30  iot_commands
+      52  iot_port_setup
+
+ 
+ 704 bytes in segment CODE
+   4 bytes in segment DATA16_AN
+  67 bytes in segment DATA16_C
+  40 bytes in segment DATA16_Z
+ 
+ 704 bytes of CODE  memory
+  67 bytes of CONST memory
+  40 bytes of DATA  memory (+ 4 bytes shared)
+
+Errors: none
+Warnings: none
