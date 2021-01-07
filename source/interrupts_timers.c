@@ -13,7 +13,6 @@
 #include <string.h>
 #include "macros.h"
 
-
 volatile char one_time;
 unsigned int LCD_COUNTER;
 unsigned int TIME_SEQUENCE_COUNTER;
@@ -49,11 +48,9 @@ unsigned int enable_sec_count;
 unsigned int counter_second;
 unsigned int one_sec_clear_array;
 unsigned volatile int clear_array;
-
 extern unsigned int display_menu_state;
 volatile unsigned int five_sec_count;
 extern volatile int p2_pressed;
-
 volatile extern unsigned int UCA0_index;
 extern char test_command[10];
 extern char message_keeper[10];
@@ -96,7 +93,6 @@ __interrupt void Timer0_B0_ISR(void){
       P5SEL0 |= IOT_RESET;             //IOT_RESET signal selection
       P5SEL1 |= IOT_RESET;             //IOT_RESET signal selection
       low_once =3;
-      //GREEN_LED_ON;
 
     }
   if(TIME_SEQUENCE_COUNTER == EVERY_10_MS){       //Every 10 ms
@@ -107,7 +103,6 @@ __interrupt void Timer0_B0_ISR(void){
   if(update_display_counter > EVERY_200_MS){
       update_display = YES;
       update_display_counter = RESET_COUNTER;    
-   
   }
   if(enable_adc){
   adc_counter++;
@@ -124,19 +119,6 @@ __interrupt void Timer0_B0_ISR(void){
     circle_timer++;
     circle_timer_interrupt_counter =0;
   }
-  
-  //one second counter
-//   if(one_sec_count == 1){
-//      enable_sec_count = 1;
-//  }
-//  if(enable_sec_count){
-//    counter_second++;
-//  }
-//  if(counter_second > 200 ){
-//      enable_sec_count = 0;
-//      one_sec_count = 2;        //done sec
-//      counter_second =0;
-//  }
   
   //five sec counter
   if(five_sec_count == 1){

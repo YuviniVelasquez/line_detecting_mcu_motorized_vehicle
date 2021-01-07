@@ -135,8 +135,7 @@ void display_menu(void){
 
 void display_line_copier(void){
 
-
-  display_line[DISPLAY_L2][DISP_CHAR_0] = command_keeper[STR_CHAR_0];
+display_line[DISPLAY_L2][DISP_CHAR_0] = command_keeper[STR_CHAR_0];
 display_line[DISPLAY_L2][DISP_CHAR_1] = command_keeper[STR_CHAR_1];
 display_line[DISPLAY_L2][DISP_CHAR_2] = command_keeper[STR_CHAR_2];
 display_line[DISPLAY_L2][DISP_CHAR_3] = command_keeper[STR_CHAR_3];
@@ -147,20 +146,6 @@ display_line[DISPLAY_L2][DISP_CHAR_7] = command_keeper[STR_CHAR_7];
 display_line[DISPLAY_L2][DISP_CHAR_8] = command_keeper[STR_CHAR_8];
 display_line[DISPLAY_L2][DISP_CHAR_9] = command_keeper[STR_CHAR_9];
 
-// if(display_keeper[STR_CHAR_0] != ' '){
-//    message_keeper[STR_CHAR_0]=display_keeper[STR_CHAR_0];
-//    message_keeper[STR_CHAR_1]=display_keeper[STR_CHAR_1];
-//    message_keeper[STR_CHAR_2]=display_keeper[STR_CHAR_2];
-//    message_keeper[STR_CHAR_3]=display_keeper[STR_CHAR_3];
-//    message_keeper[STR_CHAR_4]=display_keeper[STR_CHAR_4];
-//    message_keeper[STR_CHAR_5]=display_keeper[STR_CHAR_5];
-//    message_keeper[STR_CHAR_6]=display_keeper[STR_CHAR_6];
-//    message_keeper[STR_CHAR_7]=display_keeper[STR_CHAR_7];
-//    message_keeper[STR_CHAR_8]=display_keeper[STR_CHAR_8];
-//    message_keeper[STR_CHAR_9]='\0';
-//   // store_once =0;
-//  }
-  
 }
 
 void display_line_clear(void){
@@ -173,8 +158,6 @@ void display_line_clear(void){
 //    }
   }
 
-
-
 void display_putty_state(void){
 
   switch(display_putty) {
@@ -184,10 +167,7 @@ void display_putty_state(void){
            strcpy(display_line[DISPLAY_L3], "I'm here  ");
            update_string(display_line[DISPLAY_L3], DISPLAY_L3);
           UCA1_index=0;
-          //UCA1IE |= UCTXIE;
-          //UCA1TXBUF = message_keeper[0];
-                 display_putty=0;
-
+          display_putty=0;
 
       break; 
    case 2  : // UCA1TXBUF = '\n';
@@ -196,25 +176,19 @@ void display_putty_state(void){
           update_string(display_line[DISPLAY_L3], DISPLAY_L3);
           //UCA1IE |= UCTXIE;
           UCA1_index=0;
-         // UCA1IE |= UCTXIE;
+          //UCA1IE |= UCTXIE;
           //UCA1TXBUF = message_keeper[0];
           display_putty=0;      
-
       break; 
   
-   /* you can have any number of case statements */
    default : break;
   }
-
-
-
 }
 
 void command_array_clear(void){
 int j;
 for(j=0;j<10;j++){
   command_keeper[j]=' ';
-
 }
  command_keeper[10]='\n';
 }
@@ -223,7 +197,6 @@ void command_array_copier(void){
 int j;
   for(j=0;display_keeper[j] != '\r';j++){
         command_keeper[j]=display_keeper[j];
-
   }
        check_command_once = 1;
 }

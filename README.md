@@ -1,27 +1,17 @@
 # Line Detecting MCU Motorized Vehicle
-## An Embedded Systems project with an Extreme Learning Curve
+## An Embedded Systems Project with an Extreme Learning Curve
 
 # Table of Content
 
 1. [Scope](#scope)
-2. [Abbreviations](#abbreviations)
-3. [Overview](#overview)
+2. [Overview](#overview)
     1. [Power System](#powersystem31)
     2. [Motors](#motors32)
     3. [User Interface](#userinterface33)
     4. [IR Emitter and Detector](#irdetector34)
     5. [Serial Communication Pins](#scp35)
     6. [IOT Module](#iotmodule36) 
-4. [Hardware](#hardware)
-    1. [Power System](#powersystem41)
-    2. [Motors](#motors42)
-    3. [User Interface](#userinterface43)
-        - [LCD](#lcd43)
-    4. [IR Emitter and Decetcor](#irdetector44)
-    5. [Serial Communication Pins](#scp45)
-    6. [IOT Module](#iotmodule46)
-5. [Power Analysis](#poweranalysis)
-6. [Test Process](#testprocess)
+3. [Test Process](#testprocess)
     1. [Power System](#powersystem51)
         - [Battery Supply Power Fix](#batterysupply61)
     2. [LCD Display/Switches](#lcddisplay62)
@@ -31,54 +21,30 @@
     6. [Transmittin and Receiving a Command](#command66)
     7. [Movement Using IOT Commands](#iotcommand67)
     8. [Wireless and Self-Guided Navigation](#navigation68)  
-7. [Software](#software)
-    1. [main](#main71)
-    2. [Initialization](#init72)
-    3. [Interrupts](#interrupt73)
-    4. [IOT](#iot74)
-    5. [Transimt Signal](#tsignal75)
-    6. [Line Detection Course Execution](#lineexecution76)
-8. [Flowchart](#flowchart)
-    1. [Main](#main81)
-    2. [Initialization](#initialization82)
-        - [Timer Initialization](#timerinit82)
-        - [Port Initialization](#portinit82)
-        - [Serial Initialization](#serialinit82)
-    3. [Interrupts](#interrupts83)
-    4. [IOT](#flowiot84)
-        - [IOT Configuration](#iotconf84)
-        - [IOT Command Type](#iotct84)
-        - [IOT Command Interval](#iotci84)
-    5. [Transmit Signal](#transmitsignal85)
-    6. [Line Detection Course Execution](#linecourse86)  
 9. [Conclusion](#conclusion)
-
-
 
 ## 1. Scope <a name="scope"></a>
 
-This document details the electrical circuits, components, software, and procedures behind the development of an Autonomous Line Detecting Electric Unmanned Motorized Vehicle using the MSP430 development kit.  The car is designed to locate, align path of travel, recognize, and maintain focus of, and finally follow a black line through a course autonomously.  During the production of the car, the team has several milestones, a number of which are merely to establish functionality and proof of concept.
+This document details the electrical circuits, components, software, and procedures behind the development of an Autonomous Line Detecting Electric Unmanned Motorized Vehicle using the MSP430 development kit. 
+
+The car is designed to locate, align path of travel, recognize, and maintain focus of, and finally follow a black line through a course autonomously.  During the production of the car, the team has several milestones, a number of which are merely to establish functionality and proof of concept.
+
 The project was commissioned in Fall 2019. It was to be completed within 14 weeks. Deadlines were established to keep record of the progress. These deadlines were spread throughout the 14 weeks, usually with a week to two weeks between deadlines. 
 
-## 2. Abbreviations <a name="abbreviations"></a>
+**Note** A full documentation of this project can be seen in the wiki of this repository
 
-| Abbreviation: | Description: |
-| --- | ----------- |
-| ADC | Analog to Digital Converter |
-| FET | Field-Effect Transistor |
-| FRAM | Ferroelectric Random-Access Memory |
-| IAR Embedded Workbench | a development environment that includes a C/C++ compiler, code analysis tools, security tools, debugging and trace probes. |
-| IOT | Internet of Things |
-| IR | Infrared Emitter / Detector  |
-| LCD | Liquid Crystal Display |
-| MOSFET | Metal–Oxide–Semiconductor Field-Effect Transistor |
-| NFET | N-channel MOSFET |
-| PFET | P-channel MOSFET |
-| PCB | Printed Circuit Board |
-| PID | Proportional Integral Derivative |
-| PWM | Pulse Width Modulation |
+<table>
+  <tr>
+    <td><img src="images/IMG_5400.jpg" width=450></td>
+    <td><img src="images/IMG_5403.jpg" width=450 ></td>
+  </tr>
+  <tr style="text-align:center">
+    <td>Front View of Line Detecting Car</td>
+    <td>Top View of Line Detecting Car</td>
+  </tr>
+ </table>
 
-## 3. Overview <a name="overview"></a>
+## 2. Overview <a name="overview"></a>
 The vehicle consists of a 4 AA battery power supply, a control board with power circuit, two H-bridges that switch the direction of supplied voltage and allows for left and right motors, the MSP-EXP430FR2355 FRAM board, an IR emitter and IR detector, and an LCD display.
 
 <div style="text-align:center"><img src="images/overview.jpg"/></div>
@@ -117,62 +83,10 @@ The communication between the control board and external devices will be done th
 ### 6. IOT Module <a name="iotmodule36"></a>
 An IOT module is implemented to communicate and control the vehicle wirelessly. The IOT will be reset and setup accordingly at the start of every vehicle run. Additionally, the IOT will communicate to the control board the IP address assigned and the control board will process and display this IP. The IOT will receive a string of characters from a wireless network and will transmit it to the control board. The control board will parse the string and apply commands according to the parsed information.
 
-<div style="text-align:center"><img src="images/iot36.jpg"/></div>
+<div style="text-align:center"><img src="images/oit36.jpg"/></div>
 <div style="text-align:center">IOT Module Block Diagram</div>
 
-## 4. Hardware <a name="hardware"></a>
-
-### 1. Power System <a name="powersystem41"></a>
-The schematics for the power system and an image of the power board are shown below. The batteries connect to node J0, which is connected to a switch, and to ground. The switch connects the batteries to the circuit when it is on and disconnects them when it is off. There is a diode, D2, connected between C7 and C12. This diode is a safety net incase the batteries are connected with terminals switched. It prevents power from being supplied to the circuit unless the batteries are connected properly.
-
-<div style="text-align:center"><img src="images/powersystem41.jpg"/></div>
-<div style="text-align:center">Power System Schematic</div>
-
-### 2. Motors <a name="motors42"></a>
-The schematics for the motor H-bridges are shown below. The nodes (depicted on the following schematics), L_FORWARD, L_REVERSE, R_FORWARD, and R_REVERSE are port pins controlled by the MSP430. Changing L_FORWARD pin to a high output turns on the following FETs: Q41 and Q42. Q41 connects L_MOTOR_REVERSE to ground, and Q42 turns on the Q43 which supplies voltage to L_MOTOR_FORWARD. Supplying power in this way turns the motor on in the forward direction. This process is the same with regards to R_FORWARD, just with FETs Q21, Q22, and Q23.
-
-Changing L_REVERSE to a high output turns on the following FETs: Q31 and Q32. Turning on Q31 connects L_MOTOR_FORWARD to ground. Turning on Q32 turns on Q33 which connects L_MOTOR_REVERSE to power. When power is supplied this way, the motor will operate in the reverse direction.
-
-**NOTE:** Never turn L_FORWARD and L_REVERSE on at the same time, this will destroy the motors. The same caution should be observed with R_FORWARD and R_REVERSE as well.  The time delay “Tau” can be determined by measuring the time for the current to sufficiently slow.  If the motor is in forward motion, once the forward pin has been turned off measure the time it takes for the current through J43 to dissipate to zero.
-
-<div style="text-align:center"><img src="images/motors42.jpg"/></div>
-<div style="text-align:center">Left side H-Bridge Schematic</div>
-
-<div style="text-align:center"><img src="images/motorsr42.jpg"/></div>
-<div style="text-align:center">Right side H-Bridge Schematic</div>
-
-### 3. User Interface <a name="userinterface43"></a>
-### - LCD <a name="lcd43"></a>
-The figure below details the schematics for the LCD circuit. Power is supplied to the LCD display by node PWR3_3. The node LCD_BACKLITE is connected to a FET, Q50 that acts as a switch. When LCD_BACKLITE is high, the FET is enabled and the circuit to the backlight is completed, which turns on the backlight. When LCD_BACKLITE is low, the circuit is incomplete, and the backlight is off. 
-
-<div style="text-align:center"><img src="images/lcd43.jpg"/></div>
-<div style="text-align:center">LCD Schematic</div>
-
-### 4. IR Emitter and Decetcor <a name="irdetector44"></a>
-The schematic for the infrared emitter and detector is shown in the figure below. D3 is the emitter diode. DQ1 and DQ2 are the detectors. The emitter is connected to the board through an NFET. When the NFET receives a high value from the node IR_LED, it completes the emitter circuit, and turns on the emitter. The detectors are connected to the ADC with a pullup resistor. When a detector is not receiving any IR signals, the IR sensitive materials within the detector are very resistive. This results in the voltage read by the ADC being close to the voltage provided by the pullup resistor. When a detector is receiving IR signals, the IR sensitive materials become less resistive. This results in the voltage read by the ADC being pulled towards ground. These phenomena allow detection between black and white surfaces. Black absorbs most forms of light, and white reflects most forms. This means that when the IR Emitter is on, and the detectors are angled correctly, the ADC should read a high value when the detectors are over a black surface, and low values when the detectors are over a white surface.
-
-<div style="text-align:center"><img src="images/ir44.jpg"/></div>
-<div style="text-align:center">IR Emitter and Detector Schematic</div>
-
-### 5. Serial Communication Pins <a name="scp45"></a>
-The serial communication pins are located on J1, J14, and J17. J1 has the UCA0TXD and UCA0RXD pins, while J14 and J17 have the UCA1TXD and UCA1RXD pins. These pins are used to communicate with external devices such as an IOT module. The TXD pins are used to transmit signals and the RXD pins are used to receive signals. Both pins are interrupt enabled. The TXD pins will trigger an interrupt when the UCAxTXBUF register is empty and ready to receive a new character to transmit. The RXD pins will trigger an interrupt when a character has been received and is ready to be read from the UCAxRXBUF register.
-
-<div style="text-align:center"><img src="images/serial45.jpg"/></div>
-<div style="text-align:center">Port Pin Schematic</div>
-
-### 6. IOT Module <a name="iotmodule46"></a>
-The IOT module connects to the control board via J61. Communications between the IOT device and the MSP430 occur utilizing the UCA0TXD and UCA0RXD serial communication pins. In order to communicate with the IOT, it must undergo a hardware reset. This is done by setting the IOT_RESET pin low for at least 100 milliseconds, and then setting it high. After that, commands can be sent to the IOT via the UCA0TXD pin. With the programming installed on the IOT module, it will communicate with a baud rate of 115200 after a factory reset. The pins PROGRAM_SELECT and PROGRAM_MODE are used when programming the IOT module. The diodes D61 and D62 can be turned on by activating the corresponding pins IOT_LINK and IOT_RUN. These pins are activated by sending specific commands to the IOT module.  Some helpful commands after the reset are: “AT+WKEEPALIVE=5”, this sends an “I’m still here don’t disconnect me” message to the network router to ensure disassociation events are eliminated.  “AT+NSTAT” this will reply with all of the network specifics like the SSID and the IP address.
-
-<div style="text-align:center"><img src="images/iot46.jpg"/></div>
-<div style="text-align:center">IOT Module Circuit Schematic</div>
-
-## 5. Power Analysis <a name="poweranalysis"></a>
-The power consumption of the system varies greatly depending on the peripherals being used, the most demanding out of those being the motors, IR emitter, and LCD backlight. Using these heavily will decrease the total time the vehicle can operate fully. Sluggish motors will be the first sign that new batteries are needed. Due to the high voltage requirement, they will be the first to show unexpected behavior or unresponsiveness despite the rest of the vehicle operating properly. If this is the case, a new set of batteries is recommended.
-
-From our testing, we determined that the system can operate fully, i.e. motor control, Wi-Fi communication, and IR emitter, for upwards of 1 hour and 40 minutes using a new set of batteries (or rechargeable batteries with a combined voltage 6.4 V). This value was obtained from both real-word usage and by measuring the power draw from each component throughout the process of assembling the vehicle.
-
-
-## 6. Test Process <a name="testprocess"></a>
+## 3. Test Process <a name="testprocess"></a>
 ### 1. Power System <a name="powersystem51"></a>
 When testing the power system, we supplied 4.5V to the board. Using an oscilloscope, we measured the voltage across two nodes, J12 and GND, and verified that the board was limiting the power being supplied to ~3.3V. 
 The process was recreated using an Analog Discovery to emulate a power supply and oscilloscope. This can be seen in the figures below. Notice the voltage being measured at node J12 in Figure 63 is 3.3235V.
@@ -278,102 +192,6 @@ The final test for the Unmanned Motorized Vehicle was to navigate a course utili
 <div style="text-align:center"><img src="images/course68.jpg"/></div>
 <div style="text-align:center">Self-Guided Navigation Course</div>
 
-## 7. Software <a name="software"></a>
-### 1. Main <a name="main71"></a>
-The main block is called when the vehicle is powered on. Main does not take any parameters. First, main calls several functions to initialize the ports, timers, clocks, interrupts, LEDs, and the LCD. These functions ensure that the system and peripherals operate the same way each time the device is powered on. Second, main enters a continuous while loop, allowing the device to respond to interrupts and a way for the user to provide input via switches.
-
-### 2. Initialization <a name="init72"></a>
-Ports configurations are initialized in Init_Ports(). Certain ports are configured as input, output, or function states depending on the need. The MSP430 has six ports that need to be initialized. Each port can have up to 8 pins (labeled 0 – 7). The pins are configured using registers, the most common of which are the select, direction, and out registers. Each pin is configured using the corresponding bit in the register. For instance, in order to set Port 1 Pin 0 to I/O, you must set bit zero in the SEL0 and SEL1 registers to zero. 
-Timers are initialized in Init_Timers(). This function calls three other functions that configure timers B0, B1, and B3 (timer B2 is not currently in use). Each timer has their clock source and interval duration defined in their own function.
-- Timer B0 serves several purposes in the vehicle and, because of this, is configured as both a 50 msec timer and a 100 msec timer. The former is used in an interrupt to update the LCD and toggle the ADC conversion and the latter is used in the switch debounce interrupt. 
-- Timer B1 is configured for a 20 msec timer. It is used in an interrupt to update the global variable Time_Sequence.
-- Timer B3 is configured for Pulse Width Modulation (PWM). PWM is a method of reducing or increasing the power delivered by a signal and is accomplished by adjusting the time the signal is high or low, or the duty cycle of the signal. This allows the vehicle to have varying motor speeds.
-
-Serial communication is initialized in Init_Serial(). This function calls two other functions, Init_Serial_UCA0() and Init_Serial_UCA1(), that configure both serial ports for use. The baud rate is set to 115,200 Hz initially but may be changed via the function toggle_baud_rate() after startup.
-
-### 3. Interrupts <a name="interrupt73"></a>
-Three types of Interrupts were used. The first type of interrupt was a Continuous Timer Interrupt. This timer interrupt is used to generate independent time intervals and output frequencies. The timer has an Interval and when this interval is completed, and interrupt is generated. After the interrupt has occurred, A new interval is given which enables the timer to continue until next interrupt.
-
-This timer interrupt was used as a counter for a state machine in main case statements, as a one second counter, and as a debounce counter for the switch interrupt. 
-
-The ADC interrupt is enabled as the IR Emitter/Detector input changes. In the interrupt the ADC Sample reader is disabled, and the interrupt enters an FSM. The FSM reads the input in every channel and passes the Digital Signal to a binary converter. After the FSM is completed the interrupt sample is enabled. 
-
-The Switch interrupt is enabled when switch 1 or switch 2 is pressed. The Switch is disabled while a debounce counter reaches a one second interval. This prevents any counters that are dependent on the switch to increase while the switch is pressed. Once the debounce counter is completed, the switch is enabled, and a switch value is set to inform that the process is completed.
-
-The Serial Interrupts are controlled by two separate registers, the RX (Receiver) and TX (Transmitter) registers. Activation of either will execute the corresponding vector within the Serial Interrupt. The controller “transmits” data through the TXBUF register and receives data into the RXBUF register. At the end of every transmission, the controller passes “0x0D” followed by “0x0A” to let the other device know when to stop receiving.
-
-### 4. IOT <a name="iot74"></a>
-The IOT software consist of a configuration, command, and interval section. The configuration is needed for the IOT to work properly. The IOT software is enabled every time the vehicle is turned on. The configuration consists of a IOT reset section, assigning the port to be used in wireless communication, and Pinning google so that the IOT won’t disconnect to the network.
-
-### 5. Transimt Signal <a name="tsignal75"></a>
-The transmit signal is the method to communicate from the IOT module to the control board. When a transmit signal is high, the transmit interrupt is enabled. This allows for the flow of communication to occur just as needed. Once the transmission is completed the transmission interrupt is disabled.
-
-### 6. Line Detection Course Execution <a name="lineexecution76"></a>
-The Black line course software is what will control the navigation system as to travel the black line course. This the control will consist of pre-determined navigation, black light detection, black light navigation, and exiting navigation cases. Some cases will be executed sequentially, and others will be dependent on the input feedback from an IR detector
-
-## 8. Flowchart <a name="flowchart"></a>
-###    1. Main <a name="main81"></a>
-
-<div style="text-align:center"><img src="images/main81.jpg"/></div>
-<div style="text-align:center">Main Flow Chart</div>
-
-###    2. Initialization <a name="initialization82"></a>
-###        - Timer Initialization <a name="timerinit82"></a>
-
-<div style="text-align:center"><img src="images/timerinit821.jpg"/></div>
-<div style="text-align:center">Timer Initialization Flow Chart</div>
-
-###        - Port Initialization <a name="portinit82"></a>
-
-<div style="text-align:center"><img src="images/portinit822.jpg"/></div>
-<div style="text-align:center">Port Initialization Flow Chart</div>
-
-###        - Serial Initialization <a name="serialinit82"></a>
-
-<div style="text-align:center"><img src="images/serialinit823.jpg"/></div>
-<div style="text-align:center">Serial Initialization Flow Chart</div>
-
-###    3. Interrupts <a name="interrupts83"></a>
-
-<div style="text-align:center"><img src="images/interrupts83.jpg"/></div>
-<div style="text-align:center"><img src="images/interrupts832.jpg"/></div>
-<div style="text-align:center">Interrupt Flow Chart</div>
-
-
-<div style="text-align:center"><img src="images/interrupts832.jpg"/></div>
-<div style="text-align:center">Serial Interrupt Flow Chart</div>
-
-
-<div style="text-align:center"><img src="images/interrupts833.jpg"/></div>
-<div style="text-align:center">Toggle Baud Rate Flow Chart</div>
-
-
-###    4. IOT <a name="flowiot84"></a>
-###        - IOT Configuration <a name="iotconf84"></a>
-
-<div style="text-align:center"><img src="images/iotconfig841.jpg"/></div>
-<div style="text-align:center">IOT Configuration Flow Chart</div>
-
-###        - IOT Command Type <a name="iotct84"></a>
-
-<div style="text-align:center"><img src="images/iotconfig842.jpg"/></div>
-<div style="text-align:center">IOT Command Call Flow Chart</div>
-
-###        - IOT Command Interval <a name="iotci84"></a>
-
-<div style="text-align:center"><img src="images/iotconfig843.jpg"/></div>
-<div style="text-align:center">IOT COmmand interval</div>
-
-###    5. Transmit Signal <a name="transmitsignal85"></a>
-
-
-<div style="text-align:center"><img src="images/transmitsignal85.jpg"/></div>
-<div style="text-align:center">Transmit Signal Flow Chart</div>
-
-###    6. Line Detection Course Execution <a name="linecourse86"></a>
-
-<div style="text-align:center"><img src="images/courseexecution86.jpg"/></div>
-<div style="text-align:center">Line Course Execution Flow Chart</div>
 
 ## 9. Conclusion <a name="conclusion"></a>
 
@@ -381,6 +199,8 @@ After completing each project, a few things stood out about the course as a whol
 
 First, the teaching assistants for this course were phenomenal! Whether it was online or in the lab, someone was available and willing to help or offer advice, even if it was outside of their scheduled time. Part of their willingness to help probably stems from the fact that they were in the same or similar situation when taking the class, so it was good to get help from people who had gone through the same stuff.  Without these outstanding humans the vast majority of the class would not have been successful in their endeavors.
 
-Secondly, the structure of the course projects was well planned. Each new addition to the car built on the foundation implemented in the previous project/homework until a final goal was met. For example, several projects led to the ability to navigate a black line. It started with simply getting forward movement. After this, reverse movement was implemented, adding the ability to make turns quickly. Finally, sensors were mounted so that information about the vehicle’s surrounding could be processed, leading to the ability to locate a black line and traverse it. A similar structure was used to add the IoT/serial communication functionality. It is obvious that the projects have been refined over years of teaching the course and this made it feel like you were never thrown into something over your head (most of the time).
+Secondly, the structure of the course projects was well planned. Each new addition to the car built on the foundation implemented in the previous project/homework until a final goal was met. For example, several projects led to the ability to navigate a black line. It started with simply getting forward movement. After this, reverse movement was implemented, adding the ability to make turns quickly. 
+
+Finally, sensors were mounted so that information about the vehicle’s surrounding could be processed, leading to the ability to locate a black line and traverse it. A similar structure was used to add the IoT/serial communication functionality. It is obvious that the projects have been refined over years of teaching the course and this made it feel like you were never thrown into something over your head (most of the time).
 
 Overall, problem solving, and stress management skills were undoubtedly refined the entire duration of the semester.  

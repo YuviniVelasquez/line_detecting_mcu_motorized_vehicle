@@ -35,27 +35,21 @@ extern volatile unsigned int UCA1_index;
 // of the debounce timer. Flag is set that user space can check.
 //Include #pragma vector = [Assigned Vector]
 #pragma vector=PORT2_VECTOR
-//Create Interrupt Service Routine Function with “__interrupt”
+//Create Interrupt Service Routine Function with ï¿½__interruptï¿½
 __interrupt void switchP2_interrupt(void) {
 // Switch 2
   if (P2IFG & SW2) {
     P2IFG &= ~SW2; // IFG SW1 cleared
     // Set a variable to identify the switch has been pressed.
     switch_pressed = 2;
-    
- 
     // Set a variable to identify the switch is being debounced.
-   
     //has 1 second passed?
     one_s_passed_port = 0;
-     //DISABLE INTERRUPT PURT
+    //DISABLE INTERRUPT PURT
     P2IE &= ~SW2;                  // P2.6 interrupt disable
-    
     //SET TIMER TO TURN ITSELF BACK ON
-  //  display_menu_state = 1;
-    
+    // display_menu_state = 1;
     p2_pressed ++;
- 
   }
 // Use a Timer Value to control the debounce
 }
@@ -65,40 +59,18 @@ __interrupt void switchP2_interrupt(void) {
 // of the debounce timer. Flag is set that user space can check.
 //Include #pragma vector = [Assigned Vector]
 #pragma vector=PORT4_VECTOR
-//Create Interrupt Service Routine Function with “__interrupt”
+//Create Interrupt Service Routine Function with ï¿½__interruptï¿½
 __interrupt void switchP4_interrupt(void) {
 // Switch 1
   if (P4IFG & SW1) {
     P4IFG &= ~SW1; // IFG SW1 cleared
     // Set a variable to identify the switch has been pressed.
     switch_pressed = 4;
-    
-//    if(p4_counter < 4){
-//      p4_counter++;
-//    }
     emitter_enable = 1;
     line_state = 1;
-        //has 1 second passed?
     one_s_passed_port = 0;
-    
     //DISABLE INTERRUPT PURT
     P4IE &= ~SW1;                  // P2.6 interrupt disable
-
-    //SET VARIABLE TO SHOW SWITCH PRESSED
-    
- //display_menu_state = 2;
- //p1_pressed = 1;
-     // UCA0_index=0;
-      //UCA0IE |= UCTXIE;
-     // UCA0TXBUF = message_keeper[0];
-      
-      //UCA1_index=0;
-      //UCA1IE |= UCTXIE;
-      //UCA1TXBUF = message_keeper[0];
- 
-
- 
- 
   }
 // Use a Timer Value to control the debounce
 }

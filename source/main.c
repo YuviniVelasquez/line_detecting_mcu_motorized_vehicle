@@ -60,12 +60,11 @@ extern unsigned int ADC_Left_Detect;
 extern unsigned int ADC_Right_Detect;
 extern unsigned int ADC_Thumb;
 unsigned int enable_200ms_counter;
-//extern unsigned int ADC_Channel;
-//extern unsigned int ADC_Left_Detect;
-//extern unsigned int ADC_Right_Detect;
-//extern unsigned int ADC_Thumb;
+
+
 // Function Prototypes
 void main(void);
+
 extern volatile unsigned int enable_setup_commands;
 extern volatile unsigned int enable_iot_port_number;
 extern volatile unsigned int clear_iot_command;
@@ -123,13 +122,6 @@ low_once=1;
 enable_setup_commands=0;
 enable_iot_port_number = 0;
 
-//  Display_Update(3,1,0,0);
-//    P6OUT |= R_FORWARD;              //TESTING 
-//    P6OUT |= L_FORWARD;              //TESTING
-//hw5 stuff
-//  clockdiv_count = RESET_COUNTER;       //Reset counter
-//  figure = 0;
-//  circle_timer_count = 0;
 //------------------------------------------------------------------------------
 // Begining of the "While" Operating System
 //------------------------------------------------------------------------------
@@ -147,34 +139,30 @@ enable_iot_port_number = 0;
       switch(Time_Sequence){
       case CASE_250:                        //
         if(one_time){
-          //Init_LEDs();
-          //lcd_BIG_mid();
           display_changed = CHANGE_DISP;
           one_time = ONE_TIME_ZERO;
-          //screen_counter();
         }
         Time_Sequence = RESET_TIMER;             //
         break;
       case CASE_200:                        //
         if(one_time){
- //         GREEN_LED_ON;            // Change State of LED 5
+          //GREEN_LED_ON;            // Change State of LED 5
           one_time = ONE_TIME_ZERO;
-               display_menu();
+          display_menu();
         }
         break;
       case CASE_150:                         //
         if(one_time){
- //         RED_LED_ON;            // Change State of LED 4
- //         GREEN_LED_OFF;           // Change State of LED 5
+          //RED_LED_ON;            // Change State of LED 4
+          //GREEN_LED_OFF;           // Change State of LED 5
           one_time = ONE_TIME_ZERO;
           clear_iot_command_array();
-
         }
         break;
       case CASE_100:                         //
         if(one_time){
           //lcd_4line();
-//          GREEN_LED_ON;            // Change State of LED 5
+          //GREEN_LED_ON;            // Change State of LED 5
           display_changed = CHANGE_DISP;
           one_time = ONE_TIME_ZERO;
           iot_port_setup();     //ADD PORT SETUP HERE
@@ -183,11 +171,10 @@ enable_iot_port_number = 0;
         break;
       case  CASE_50:                        //
         if(one_time){
-//          RED_LED_OFF;           // Change State of LED 4
-//          GREEN_LED_OFF;           // Change State of LED 5
+          //RED_LED_OFF;           // Change State of LED 4
+          //GREEN_LED_OFF;           // Change State of LED 5
           one_time = ONE_TIME_ZERO;
           dissasemby_setup();    //ADD DISASSOCIATION THING HERE
-          
         }
         break;                         //
       default: break;
@@ -203,9 +190,6 @@ enable_iot_port_number = 0;
     }
 
       if(usb_rx_ring_rd != usb_rx_ring_wr){
-       //if(USB_Char_Rx[usb_rx_ring_rd] == 1B){//counts the escapes in a command
-       //    command_start_end ++;
-       //}
         if(USB_Char_Rx[usb_rx_ring_rd] == '^' ){
             record_command = YES;
             i=RESET_COUNTER;
@@ -236,25 +220,12 @@ enable_iot_port_number = 0;
         number_of_commands=RESET_COUNTER;
         clear_stack(); 
     }
-    
-
-     // display_menu();
       command_library();
-      command_call_timed();
-      
+      command_call_timed(); 
       screen_counter();
-      //carlson's commands
+      //Inherited functions
        Display_Process();
-
-//      Switches_Process();                // Check for switch state change 
-//      line_detect();
-//      switch_func();
-//      figure_call();
-//      forward_rev();
   }
-  
-//    Wheels();
-
   }
 //------------------------------------------------------------------------------
 

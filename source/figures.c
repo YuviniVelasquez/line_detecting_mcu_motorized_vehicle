@@ -17,7 +17,6 @@ volatile unsigned int clockdiv_count = RESET_COUNTER;
 extern volatile unsigned int Time_Sequence;
 extern volatile unsigned int circle_timer_count;
 
-
 void stop_wheels(void){
 //------------------------------------------------------------------------------
 // Circle speed stopped

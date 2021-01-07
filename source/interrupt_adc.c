@@ -70,9 +70,6 @@ switch(__even_in_range(ADCIV,ADCIV_ADCIFG)){
       default:
         break;
     }
-    //ADCCTL0 |= ADCENC; // Enable Conversions
-    //ADCCTL0 |= ADCSC; // Start next sample
-
 
   break;
 default:

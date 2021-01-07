@@ -52,8 +52,6 @@ __interrupt void eUSCI_A0_ISR(void){
     
     break;
   case CASE_2:                                                //Vector 2 - RXIFG
-    //CODE TO RECEIVE
-
     temp = usb_rx_ring_wr++;
     USB_Char_Rx[temp] = UCA0RXBUF;                       // RX -> USB_Char_Rx character
      temp_value2 = UCA0RXBUF;                           //GETS VALUE FROM IOT
@@ -68,7 +66,7 @@ __interrupt void eUSCI_A0_ISR(void){
            number_of_commands ++;
        }
     break;
-  case CASE_4:                                               // Vector 4 – TXIFG
+  case CASE_4:                                               // Vector 4 ï¿½ TXIFG
       //CODE FOR TRANSMIT
       switch(UCA0_index++){
         case CASE_0: 
@@ -118,8 +116,6 @@ __interrupt void eUSCI_A0_ISR(void){
   } 
 }
 //--------------------------------------------------------
-
-
 //The eUSCI_A has only one interrupt vector that is shared for
 //transmission and for reception.
 //-------------------------------------------------------------
@@ -144,8 +140,7 @@ __interrupt void eUSCI_A1_ISR(void){
     //  usb_rx_ring_wr = BEGINNING;                       // Circular buffer back to beginning
    // }
     break;
-  case CASE_4:                                               // Vector 4 – TXIFG
-    
+  case CASE_4:                                               // Vector 4 ï¿½ TXIFG
       //CODE FOR TRANSMIT
       switch(UCA1_index++){
         case CASE_0: 
@@ -157,7 +152,6 @@ __interrupt void eUSCI_A1_ISR(void){
         case CASE_6: 
         case CASE_7: 
         case CASE_8: 
-         
                 // UCA1TXBUF = temp_value2;// UCA1TXBUF = message_keeper[UCA1_index];
           break;
         case CASE_9: //

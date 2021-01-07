@@ -2,7 +2,7 @@
 // File Name : clocks.c
 //  Description: This file contains the Clock Initialization
 //
-//  Jim Carlson
+//  Yuvini Velasquez
 //  Jan 2016
 //  Built with IAR Embedded Workbench Version: V(7.12.4)
 // ------------------------------------------------------------------------------

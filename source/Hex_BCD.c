@@ -84,18 +84,13 @@ if (adc_char[ADC_CHAR2] == ASCI_ZERO){
       display_line[DISPLAY_L4][DISPLAY_CHAR8] = adc_char[ADC_CHAR2];
       display_line[DISPLAY_L4][DISPLAY_CHAR9] = adc_char[ADC_CHAR3];
 
-
 }
 //******************************************************************************
 //------------------------------------------------------------------------------
 
-
-
-
 void screen_counter(void){
   if(enable_circle_timer){
     counter_char = circle_timer;
-  
 int value=RESET_INT;
 while (counter_char > THOUSAND_LIMIT){
 counter_char = counter_char - THOUSAND_CONVERTER;

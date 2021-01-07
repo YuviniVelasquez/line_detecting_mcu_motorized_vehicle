@@ -25,7 +25,6 @@ void Init_Ports(void){
 }
 //Selecting pin to low PxSEL0 &=~UNIQUE_NAME_1;
 //Selecting pin to high PxSEL1 |= UNIQUE_NAME_1;
-
 //EACH PORT PIN SHOULD HAVE 4 LINES
 //PxSEL0    SELECTING PERIPHERAL TYPE
 //PxSEL1    SELECTING PERIPHERAL TYPE
@@ -47,38 +46,24 @@ P1DIR  |=  RED_LED;              // Set direction to ??????
 
 P1SEL0 |= A1_SEEED;             //A1_SEEED signal selection
 P1SEL1 |= A1_SEEED;             //A1_SEEED signal selection
-//P1OUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 P1SEL0 |= V_DETECT_L;           //V_DETECT_L signal selection
 P1SEL1 |= V_DETECT_L;           //V_DETECT_L signal selection
-//P1OUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 P1SEL0 |= V_DETECT_R;           //V_DETECT_R signal selection
 P1SEL1 |= V_DETECT_R;           //V_DETECT_R signal selection
-//P1OUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 P1SEL0 |= V_BAT;                //V_BAT signal selection
 P1SEL1 |= V_BAT;                //V_BAT signal selection
-//P1OUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 P1SEL0 |= V_THUMB;              //V_THUMB signal selection
 P1SEL1 |= V_THUMB;              //V_THUMB signal selection
-//P1OUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 P1SEL0 |= UCA0RXD;              //UCA0RXD signal selection
 P1SEL1 &= ~UCA0RXD;             //UCA0RXD signal selection
-//PxOUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 P1SEL0 |= UCA0TXD;              //UCA0TXD signal selection
 P1SEL1 &= ~UCA0TXD;             //UCA0TXD signal selection
-//PxOUT                           // Set out value ????
-//P1DIR                           // Set direction to ??????
 
 //------------------------------------------------------------------------------  
 }
@@ -113,10 +98,6 @@ P2REN |= SW2;                   // Enable pullup resistor
  P2IES |= SW2;                // P2.0 Hi/Lo edge interrupt
  P2IFG &= ~SW2;               // Clear all P2.6 interrupt flags
  P2IE |= SW2;                 // P2.6 interrupt enabled
-//if(enable == 0){
-//}else if(enable == 1){
-//
-//}
 
 P2SEL0 &= ~P2_4;                // P2_4 GPIO operation
 P2SEL1 &= ~P2_4;                // P2_4 GPIO operation
@@ -143,25 +124,20 @@ P3OUT = P_TO_LOW;                 // P1 set Low aka = 0x00
 
 P3SEL0 &= ~TEST_PROBE;            //TEST_PROBE signal selection
 P3SEL1 &= ~TEST_PROBE;            //TEST_PROBE signal selection
-//P3OUT                           // Set out value ????
-//P3DIR                           // Set direction to ??????
 
 P3SEL0 |= OA2O;                  //OA2O signal selection
 P3SEL1 |= OA2O;                  //OA2O signal selection
-//P3OUT                          // Set out value ????
 P3DIR &= ~OA2O;                  // Set direction to ??????
 
 P3SEL0 |= OA2N;                   //OA2- signal selection
 P3SEL1 |= OA2N;                   //OA2- signal selection
-//P3OUT                           // Set out value ????
 P3DIR &= ~OA2N;                            // Set direction to ??????
 
 P3SEL0 |= OA2P;                   //OA2+ signal selection
 P3SEL1 |= OA2P;                   //OA2+ signal selection
-//P3OUT                           // Set out value ????
 P3DIR &= ~OA2P;                           // Set direction to ??????
 
-//3.4 HOMEWORK 5
+//3.4 Clock change selection with switches
 // if ( smclk == USE_GPIO){
 //    P3SEL0 &= ~SMCLK_OUT;            //SMCLK signal selection
 //    P3SEL1 &= ~SMCLK_OUT;            //SMCLK signal selection    
@@ -174,21 +150,16 @@ P3DIR &= ~OA2P;                           // Set direction to ??????
 P3SEL0 |= SMCLK_OUT;             //SMCLK signal selection
 P3SEL1 &= ~SMCLK_OUT;            //SMCLK signal selection
 P3OUT |= SMCLK_OUT;              // Set out value ???? 9/27
-//--P3DIR &= ~SMCLK;             // Set direction to ??????
 
 P3SEL0 &= ~OA3O;                 //OA3O signal selection
 P3SEL1 &= ~OA3O;                 //OA3O signal selection
-//P3OUT                          // Set out value ????
 P3DIR &= ~OA3O;                  // Set direction to ??????WHY?
 
 P3SEL0 &= ~IOT_LINK;            //IOT_LINK signal selection
 P3SEL1 &= ~IOT_LINK;            //IOT_LINK signal selection
-//P3OUT                         // Set out value ????
-//P3DIR                         // Set direction to ??????
 
 P3SEL0 &= ~P3_7;                //P3_7 signal selection
 P3SEL1 &= ~P3_7;                //P3_7 signal selection
-//P3OUT                         // Set out value ????
 P3DIR &= ~P3_7;                 // Set direction to INPUT,WHY?
 
 //------------------------------------------------------------------------------  
@@ -246,29 +217,18 @@ P5OUT = P_TO_LOW;                 // P1 set Low aka = 0x00
 
 P5SEL0 &= ~IOT_RESET;             //IOT_RESET signal selection
 P5SEL1 &= ~IOT_RESET;             //IOT_RESET signal selection
-//P5OUT                           // Set out value ????
-//P5DIR                           // Set direction to ??????
+
 P5SEL0 &= ~IR_LED;                //IR_LED signal selection
 P5SEL1 &= ~IR_LED;                //IR_LED signal selection
-//P5OUT                           // Set out value ????
-//P5DIR                           // Set direction to ??????
-
 
 P5SEL0 &= ~IOT_PROGRAM_SELECT;    //IOT_PROGRAM_SELECT signal selection
 P5SEL1 &= ~IOT_PROGRAM_SELECT;    //IOT_PROGRAM_SELECT signal selection
-//P5OUT                           // Set out value ????
-//P5DIR                           // Set direction to ??????
-
 
 P5SEL0 &= ~IOT_PROGRAM_MODE;      //IOT_PROGRAM_MODE signal selection
 P5SEL1 &= ~IOT_PROGRAM_MODE;      //IOT_PROGRAM_MODE signal selection
-//P5OUT                           // Set out value ????
-//P5DIR                           // Set direction to ??????
 
 P5SEL0 &= ~CHECK_BAT;             //CHECK_BAT signal selection
 P5SEL1 &= ~CHECK_BAT;             //CHECK_BAT signal selection
-//P5OUT                           // Set out value ????
-//P5DIR                           // Set direction to ??????
 //------------------------------------------------------------------------------  
 
 //------------------------------------------------------------------------------  
@@ -283,22 +243,18 @@ P6OUT = P_TO_LOW;                 // P1 set Low
 
 P6SEL0 |= R_FORWARD;             //R_FORWARD signal selection
 P6SEL1 &= ~R_FORWARD;             //R_FORWARD signal selection
-//P6OUT &= ~R_FORWARD;              // Set out value ????
 P6DIR |= R_FORWARD;               // Set direction to ??????
 
 P6SEL0 |= L_FORWARD;             //L_FORWARD signal selection
 P6SEL1 &= ~L_FORWARD;             //L_FORWARD signal selection
-//P6OUT &= ~L_FORWARD;              // Set out value ????
 P6DIR |= L_FORWARD;               // Set direction to ??????
 
 P6SEL0 |= R_REVERSE;             //R_REVERSE signal selection
 P6SEL1 &= ~R_REVERSE;             //R_REVERSE signal selection
-//P6OUT &= ~R_REVERSE;              // Set out value ????
 P6DIR |= R_REVERSE;               // Set direction to ??????
 
 P6SEL0 |= L_REVERSE;              //L_REVERSE signal selection
 P6SEL1 &= ~L_REVERSE;             //L_REVERSE signal selection
-//P6OUT &= ~L_REVERSE;              // Set out value ????
 P6DIR |= L_REVERSE;               // Set direction to ??????
 
 //P6SEL0 &= ~LCD_BACKLITE;          //LCD_BACKLITE signal selection
@@ -324,7 +280,6 @@ P6DIR |= L_REVERSE;               // Set direction to ??????
 
 P6SEL0 |= P6_5;                   //P6_5 signal selection
 P6SEL1 &= ~P6_5;                  //P6_5 signal selection
-//P6OUT                           // Set out value ????
 P6DIR &= ~P6_5;                   // Set direction to INPUT
 
 P6SEL0 &= ~GRN_LED;               //P6_6 signal selection

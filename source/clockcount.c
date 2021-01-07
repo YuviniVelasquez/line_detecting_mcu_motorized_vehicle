@@ -24,16 +24,7 @@ extern volatile unsigned int circle_timer_count;// =0;
 
 void fsm (int casefsm){
   if(casefsm == 0){
-    //delay
-//    state=0;
-//    if(time_follower != Time_Sequence ){
-//      time_follower = Time_Sequence;
-//      delay_counter ++;
- 
-//    if (delay_counter >= 500){
-//    state=1;
-//    circle_timer_count =0;
-//    }    
+    
   if ( (!(P4IN & SW1))||(!(P2IN & SW2))) {                    //Project 4 SW enable 
       circle_timer_count =0;
       state = 1;

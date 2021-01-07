@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-#include  "functions.h"
-#include  "msp430.h"
+#include "functions.h"
+#include "msp430.h"
 #include <string.h>
 #include "macros.h"
 
@@ -29,13 +29,13 @@ void enable_interrupts(void);
 //}
 
 //inline void enable_interrupts(void) __attribute__((always_inline));
-void enable_interrupts(void){
-  __bis_SR_register(GIE);     // enable interrupts
-//  asm volatile ("eint \n");
+void enable_interrupts(void)
+{
+  __bis_SR_register(GIE); // enable interrupts
+  //  asm volatile ("eint \n");
 }
 
 //inline void disable_interrupts(void) __attribute__((always_inline));
 //void disable_interrupts(void){
 //  asm volatile ("dint \n");
 //}
-
