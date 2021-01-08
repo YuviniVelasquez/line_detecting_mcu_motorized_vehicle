@@ -195,12 +195,12 @@ The final test for the Unmanned Motorized Vehicle was to navigate a course utili
 
 ## 9. Conclusion <a name="conclusion"></a>
 
-After completing each project, a few things stood out about the course as a whole.
+A few important details and lessons stood out about the project as a whole.
 
-First, the teaching assistants for this course were phenomenal! Whether it was online or in the lab, someone was available and willing to help or offer advice, even if it was outside of their scheduled time. Part of their willingness to help probably stems from the fact that they were in the same or similar situation when taking the class, so it was good to get help from people who had gone through the same stuff.  Without these outstanding humans the vast majority of the class would not have been successful in their endeavors.
+First, the importance of mentoring in a fast paced enviroment is crucial. Mentoring was avaiable via online or in the lab. 
 
-Secondly, the structure of the course projects was well planned. Each new addition to the car built on the foundation implemented in the previous project/homework until a final goal was met. For example, several projects led to the ability to navigate a black line. It started with simply getting forward movement. After this, reverse movement was implemented, adding the ability to make turns quickly. 
+Secondly, a well structured project eased the creation, debugging and assembly of the project. Each new addition to the car built on the foundation implemented in the previous step until there was a complete project. For example, several projects led to the ability to navigate a black line. It started with simply getting forward movement. After this, reverse movement was implemented, and later added the ability to make turns quickly. 
 
-Finally, sensors were mounted so that information about the vehicle’s surrounding could be processed, leading to the ability to locate a black line and traverse it. A similar structure was used to add the IoT/serial communication functionality. It is obvious that the projects have been refined over years of teaching the course and this made it feel like you were never thrown into something over your head (most of the time).
+Finally, sensors were mounted so that information about the vehicle’s surrounding could be processed, leading to the ability to locate a black line and traverse it. A similar structure was used to add the IoT/Serial communication functionality.
 
-Overall, problem solving, and stress management skills were undoubtedly refined the entire duration of the semester.  
+Overall the ability to problem solve, stress management skills, debugging, and engineering skills were undoubtedly refined with this project.
